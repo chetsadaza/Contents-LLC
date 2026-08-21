@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { CookieBanner } from '@/components/common/CookieBanner';
+import { AIChatWidget } from '@/components/common/AIChatWidget';
 
 export const MainLayout: React.FC = () => {
   const location = useLocation();
@@ -35,6 +36,9 @@ export const MainLayout: React.FC = () => {
 
       {/* Bottom Footer */}
       <Footer />
+
+      {/* Floating AI Chat Assistant Widget */}
+      <AIChatWidget />
 
       {/* Cookie Consent Banner */}
       <CookieBanner />

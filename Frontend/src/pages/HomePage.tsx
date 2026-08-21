@@ -1173,11 +1173,11 @@ export const HomePage: React.FC = () => {
             </div>
           </Container>
 
-          {/* FLOATING NEXT STEP BUTTON */}
-          <div className="absolute bottom-6 right-6 z-30 sm:bottom-8 sm:right-8">
+          {/* FLOATING NEXT STEP BUTTON (Elevated on the right above global chat widget) */}
+          <div className="absolute bottom-22 right-6 z-30 sm:bottom-24 sm:right-8">
             <button
               onClick={handleNextStep}
-              className="group flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs sm:text-sm font-semibold shadow-lg hover:shadow-xl hover:border-slate-400 dark:hover:border-slate-600 transition-all duration-300 cursor-pointer active:scale-95"
+              className="group flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs sm:text-sm font-semibold shadow-lg hover:shadow-xl hover:border-slate-400 dark:hover:border-slate-600 transition-all duration-300 cursor-pointer active:scale-95 whitespace-nowrap"
             >
               <span className="group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">
                 {currentProgress < 0.85 ? 'Next Step' : 'How It Works'}
