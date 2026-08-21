@@ -22,6 +22,9 @@ import {
   MessageSquare,
   Video,
   CalendarCheck,
+  Plus,
+  Minus,
+  HelpCircle,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -412,6 +415,49 @@ export const HomePage: React.FC = () => {
   };
 
   // =========================================================================
+  // FAQ ACCORDION STATE & DATA
+  // =========================================================================
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+
+  const faqItems = [
+    {
+      question: 'How does a consultation or engagement with Contents LLC work?',
+      answer:
+        'We work in three focused phases: Discovery (understanding your workflows and uncovering high-impact AI opportunities without chasing tech hype), Strategy & Design (architecting the technical solution, data pipelines, and execution roadmap), and Build & Deploy (engineering production-ready AI systems integrated directly into your operations).',
+    },
+    {
+      question: 'Do we need technical expertise or in-house developers to work with you?',
+      answer:
+        'Not at all. We handle the full technical buildout, cloud deployment, and system integrations. We also provide complete documentation, recorded video walkthroughs, and hands-on team training so your non-technical team can operate the systems effortlessly.',
+    },
+    {
+      question: 'How does invoicing work? Is upfront payment required?',
+      answer:
+        'No upfront payment is required to book a session on our calendar. Invoicing is handled separately after we finalize your scope and confirm your scheduled consultation format.',
+    },
+    {
+      question: 'How long does a typical AI implementation take?',
+      answer:
+        'Tactical AI workflows, custom assistants, and internal automations typically launch in 2 to 3 weeks. Comprehensive enterprise architectures, custom RAG knowledge engines, and multi-agent systems generally take 4 to 8 weeks depending on integration complexity.',
+    },
+    {
+      question: 'Is our company data secure when using your AI systems?',
+      answer:
+        'Security and data isolation are our highest priorities. Your proprietary business data, customer records, and internal documents are never used to train public foundation models, and all cloud/on-premise deployments adhere strictly to enterprise data privacy standards.',
+    },
+    {
+      question: 'Can I switch or upgrade between Advisory and Enterprise plans?',
+      answer:
+        'Yes, absolutely. Many founders begin with an Office Hours or Strategy Intensive session to validate their requirements, and then roll that investment directly into a larger Enterprise implementation or Info-Ops buildout.',
+    },
+    {
+      question: 'What ongoing support is provided after launch?',
+      answer:
+        'Every project includes post-launch monitoring, performance tuning, and team handover. If you require continuous optimization, you can partner with us on a monthly retainer for on-call advisory and feature expansions.',
+    },
+  ];
+
+  // =========================================================================
   // SCROLL-DRIVEN CONTINUOUS IN-PLACE PINNED SEQUENCE (HERO -> ABOUT -> APPROACH -> ALL 6 CAPABILITIES)
   // =========================================================================
   const pinnedTrackRef = useRef<HTMLDivElement>(null);
@@ -465,6 +511,33 @@ export const HomePage: React.FC = () => {
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // =========================================================================
+  // SCROLL-DRIVEN STACKED SEQUENCE (SCHEDULE -> TESTIMONIALS)
+  // =========================================================================
+  const scheduleStackRef = useRef<HTMLDivElement>(null);
+  const [scheduleStackProgress, setScheduleStackProgress] = useState<number>(0);
+
+  useEffect(() => {
+    const handleScheduleStackScroll = () => {
+      if (!scheduleStackRef.current) return;
+      const rect = scheduleStackRef.current.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      const totalScrollable = rect.height - windowHeight;
+      const currentScrolled = -rect.top;
+
+      if (totalScrollable <= 0) return;
+      const progress = Math.min(Math.max(currentScrolled / totalScrollable, 0), 1);
+      setScheduleStackProgress(progress);
+    };
+
+    window.addEventListener('scroll', handleScheduleStackScroll, { passive: true });
+    handleScheduleStackScroll();
+    return () => window.removeEventListener('scroll', handleScheduleStackScroll);
+  }, []);
+
+  const isScheduleTransitioning = scheduleStackProgress > 0.25;
+  const scheduleTransitionRatio = Math.min(Math.max((scheduleStackProgress - 0.25) / 0.45, 0), 1);
 
   // Next Step Action Handler for Interactive Floating Button
   const handleNextStep = () => {
@@ -539,7 +612,7 @@ export const HomePage: React.FC = () => {
         {/* Subtle Dot Pattern Grid Background */}
         <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] dark:bg-[radial-gradient(#334155_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_45%,black_70%,transparent_100%)] opacity-70 dark:opacity-40 -z-10 pointer-events-none" />
 
-        {/* Ambient Gradient Glow (Subtle & Refined) */}
+        {/* Ambient Gradient Glow */}
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-gradient-to-tr from-rose-500/10 via-slate-400/5 to-slate-900/10 dark:from-rose-950/20 dark:via-slate-900/10 dark:to-slate-950/30 blur-3xl pointer-events-none -z-10" />
 
         <Container>
@@ -662,7 +735,7 @@ export const HomePage: React.FC = () => {
                     </span>
                   </h2>
 
-                  {/* 3. Story Paragraphs (Typewriter) */}
+                  {/* Story Paragraphs (Typewriter) */}
                   <div className="min-h-[140px] space-y-4 text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
                     {scrollStep >= 1 && (
                       <>
@@ -684,7 +757,7 @@ export const HomePage: React.FC = () => {
                     )}
                   </div>
 
-                  {/* 4. Bottom Motto Badge */}
+                  {/* Bottom Motto Badge */}
                   <div
                     className={cn(
                       'pt-2 transition-all duration-700 ease-out',
@@ -700,7 +773,6 @@ export const HomePage: React.FC = () => {
 
                 {/* RIGHT COLUMN: Rising Bar + 3 Staggered Items */}
                 <div className="lg:col-span-6 relative pl-6 sm:pl-8">
-                  {/* Vertical Progress Bar */}
                   <div className="absolute left-0 bottom-0 top-0 w-0.5 bg-slate-200 dark:bg-slate-800">
                     <div
                       className={cn(
@@ -710,7 +782,6 @@ export const HomePage: React.FC = () => {
                     />
                   </div>
 
-                  {/* 3 Core Philosophies */}
                   <div className="space-y-6 lg:space-y-8">
                     {philosophyItems.map((item, idx) => {
                       const delayClasses = [
@@ -757,11 +828,8 @@ export const HomePage: React.FC = () => {
                   transform: scrollStep >= 3 ? `translateY(${-lineHeightPx * 2.2}px)` : undefined,
                 }}
               >
-                {/* ------------------------------------------------------------- */}
-                {/* PART 1: OUR APPROACH (From Business Problem to AI in Production) */}
-                {/* ------------------------------------------------------------- */}
+                {/* PART 1: OUR APPROACH */}
                 <div className="space-y-6 sm:space-y-8">
-                  {/* Header Title & Subtitle */}
                   <div className="text-center space-y-2.5 max-w-3xl mx-auto">
                     <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-950 dark:text-white tracking-tight leading-[1.2]">
                       From Business Problem{' '}
@@ -774,7 +842,6 @@ export const HomePage: React.FC = () => {
                     </p>
                   </div>
 
-                  {/* 3 Solution Track Cards */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-6 items-stretch relative">
                     {solutionTracks.map((card, index) => (
                       <div
@@ -787,7 +854,6 @@ export const HomePage: React.FC = () => {
                         )}
                       >
                         <div className="space-y-3.5">
-                          {/* Number Badge with Icon */}
                           <div className="flex items-center gap-2.5">
                             <div className="p-2 rounded-none bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 group-hover:scale-105 transition-transform">
                               {card.icon}
@@ -797,25 +863,20 @@ export const HomePage: React.FC = () => {
                             </span>
                           </div>
 
-                          {/* Card Title */}
                           <h3 className="text-xl sm:text-2xl font-bold text-slate-950 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">
                             {card.title}
                           </h3>
 
-                          {/* Subtitle */}
                           <p className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300 leading-snug">
                             {card.subtitle}
                           </p>
 
-                          {/* Description Paragraph */}
                           <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-normal pt-1">
                             {card.description}
                           </p>
                         </div>
 
-                        {/* Suitable Tags & Bottom Action Link */}
                         <div className="pt-5 space-y-3.5 mt-auto">
-                          {/* Suitable for badges */}
                           <div>
                             <div className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 mb-1.5">
                               Best suited for
@@ -832,7 +893,6 @@ export const HomePage: React.FC = () => {
                             </div>
                           </div>
 
-                          {/* Bottom CTA Link */}
                           <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/60">
                             <a
                               href="#schedule"
@@ -848,11 +908,8 @@ export const HomePage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* ------------------------------------------------------------- */}
-                {/* PART 2 & 3: AI CAPABILITIES (What We Build - ALL 6 CARDS)     */}
-                {/* ------------------------------------------------------------- */}
+                {/* PART 2 & 3: AI CAPABILITIES */}
                 <div className="relative pt-8 sm:pt-12 pb-32">
-                  {/* Category Header for Capabilities (Positioned ABOVE the line) */}
                   <div
                     className={cn(
                       'text-center space-y-2 max-w-3xl mx-auto mb-12 sm:mb-16 transition-all duration-700 relative z-20',
@@ -870,9 +927,7 @@ export const HomePage: React.FC = () => {
                     </p>
                   </div>
 
-                  {/* Timeline Cards Container with Clean Vertical Line Starting Right Below Header */}
                   <div className="relative pb-6 flex flex-col items-center">
-                    {/* Central Vertical Track Line */}
                     <div className="absolute top-0 bottom-20 left-6 lg:left-1/2 -translate-x-1/2 w-1 bg-slate-200/80 dark:bg-slate-800/80 rounded-full">
                       {lineHeightPx > 20 && (
                         <div
@@ -888,7 +943,6 @@ export const HomePage: React.FC = () => {
                       )}
                     </div>
 
-                    {/* 6 Capabilities Cards */}
                     <div className="w-full space-y-8 sm:space-y-10 relative z-10">
                       {capabilitiesList.map((item, idx) => {
                         const thresholds = [50, 180, 320, 480, 640, 800];
@@ -903,7 +957,6 @@ export const HomePage: React.FC = () => {
                               isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'
                             )}
                           >
-                            {/* Card Box */}
                             <div
                               className={cn(
                                 'w-full lg:w-[calc(50%-2.5rem)] pl-14 lg:pl-0 transition-all duration-700 ease-out',
@@ -957,7 +1010,6 @@ export const HomePage: React.FC = () => {
                               </div>
                             </div>
 
-                            {/* Center Node */}
                             <div className="absolute left-6 lg:left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-none">
                               <div
                                 className={cn(
@@ -977,7 +1029,6 @@ export const HomePage: React.FC = () => {
                       })}
                     </div>
 
-                    {/* Bottom Project CTA */}
                     <div className="pt-10 pb-10 text-center relative z-20">
                       <a href="#schedule">
                         <button className="h-13 sm:h-14 px-9 sm:px-11 rounded-full bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 font-bold text-base shadow-lg shadow-slate-950/20 dark:shadow-none hover:shadow-xl transition-all inline-flex items-center gap-3 cursor-pointer active:scale-98">
@@ -1023,7 +1074,6 @@ export const HomePage: React.FC = () => {
 
         <Container>
           <div className="space-y-10 lg:space-y-14">
-            {/* Header with Step Tabs & Navigation Arrows */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-200 dark:border-slate-800 pb-8">
               <div className="space-y-3 max-w-2xl">
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-950 dark:text-white tracking-tight leading-[1.18]">
@@ -1038,7 +1088,6 @@ export const HomePage: React.FC = () => {
                 </p>
               </div>
 
-              {/* Step Navigation Pill Tabs */}
               <div className="flex flex-wrap items-center gap-3 shrink-0">
                 <div className="flex bg-slate-100 dark:bg-slate-800/80 p-1 rounded-full border border-slate-200 dark:border-slate-700">
                   {howItWorksSteps.map((s, idx) => (
@@ -1077,7 +1126,6 @@ export const HomePage: React.FC = () => {
               </div>
             </div>
 
-            {/* Horizontal Sliding Carousel Track */}
             <div className="relative overflow-hidden">
               <div
                 className="flex transition-transform duration-700 ease-out"
@@ -1159,20 +1207,6 @@ export const HomePage: React.FC = () => {
                 ))}
               </div>
             </div>
-
-            {/* Downward Arrow to Social Proof */}
-            <div className="pt-4 pb-2 flex justify-center">
-              <a
-                href="#trusted-by"
-                className="group flex flex-col items-center gap-2 cursor-pointer"
-                title="Scroll down to Trusted Brands"
-              >
-                <div className="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-center text-slate-700 dark:text-slate-300 shadow-2xs hover:border-slate-400 dark:hover:border-slate-600 transition-all">
-                  <ArrowDown className="w-4 h-4 text-slate-900 dark:text-white group-hover:translate-y-0.5 transition-transform" />
-                </div>
-              </a>
-            </div>
-
           </div>
         </Container>
       </section>
@@ -1182,7 +1216,7 @@ export const HomePage: React.FC = () => {
       {/* ========================================================= */}
       <section
         id="trusted-by"
-        className="relative pt-4 pb-16 lg:pt-6 lg:pb-24 bg-white dark:bg-slate-900 overflow-hidden"
+        className="relative pt-4 pb-6 lg:pt-6 lg:pb-8 bg-white dark:bg-slate-900 overflow-hidden"
       >
         <Container>
           <div className="space-y-10 lg:space-y-12">
@@ -1275,23 +1309,6 @@ export const HomePage: React.FC = () => {
                 </div>
               ))}
             </div>
-
-            {/* Down Arrow to Pricing */}
-            <div className="pt-4 flex justify-center">
-              <a
-                href="#pricing"
-                className="group flex flex-col items-center gap-1.5 cursor-pointer"
-                title="Scroll to Pricing Plans"
-              >
-                <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
-                  Explore Pricing
-                </span>
-                <div className="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-center text-slate-700 dark:text-slate-300 shadow-2xs hover:border-slate-400 transition-all">
-                  <ArrowDown className="w-4 h-4 text-slate-700 dark:text-slate-300 group-hover:translate-y-0.5 transition-transform" />
-                </div>
-              </a>
-            </div>
-
           </div>
         </Container>
       </section>
@@ -1301,10 +1318,10 @@ export const HomePage: React.FC = () => {
       {/* ========================================================= */}
       <section
         id="pricing"
-        className="relative py-24 lg:py-32 bg-slate-50/70 dark:bg-slate-950/80 border-t border-slate-200/80 dark:border-slate-800 overflow-hidden"
+        className="relative pt-8 pb-20 lg:pt-10 lg:pb-28 bg-white dark:bg-slate-900 overflow-hidden"
       >
         <Container>
-          <div className="space-y-14 lg:space-y-16">
+          <div className="space-y-12 lg:space-y-16">
             <div className="text-center space-y-4 max-w-3xl mx-auto">
               <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-950 dark:text-white tracking-tight leading-[1.12]">
                 Simple pricing.{' '}
@@ -1510,452 +1527,887 @@ export const HomePage: React.FC = () => {
                 ))}
               </div>
             )}
+          </div>
+        </Container>
+      </section>
 
-            <div className="text-center text-xs text-slate-500 dark:text-slate-400">
-              <p>All prices in USD. Invoice sent separately after booking · no upfront payment.</p>
+      {/* ========================================================= */}
+      {/* SECTION 8 & 9: SCROLL-DRIVEN STACKED SEQUENCE             */}
+      {/* (SCHEDULE "Pick a time" -> TESTIMONIALS "What founders say") */}
+      {/* ========================================================= */}
+      <div
+        id="schedule"
+        ref={scheduleStackRef}
+        className="relative h-[250vh] border-t border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900"
+      >
+        {/* Pinned Sticky Viewport Container */}
+        <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden bg-white dark:bg-slate-900">
+          
+          {/* ========================================================= */}
+          {/* LAYER 1: PROGRESSIVE MULTI-STEP SCHEDULE WIZARD           */}
+          {/* ========================================================= */}
+          <div
+            className={cn(
+              'w-full max-w-4xl mx-auto px-4 sm:px-6 transition-all duration-500 ease-out absolute inset-x-0 my-auto',
+              scheduleStackProgress >= 0.60 ? 'pointer-events-none' : 'pointer-events-auto'
+            )}
+            style={{
+              transform: isScheduleTransitioning
+                ? `translateY(${-scheduleTransitionRatio * 150}px) scale(${1 - scheduleTransitionRatio * 0.08})`
+                : 'translateY(0px) scale(1)',
+              opacity: isScheduleTransitioning ? Math.max(1 - scheduleTransitionRatio * 1.5, 0) : 1,
+              filter: isScheduleTransitioning ? `blur(${scheduleTransitionRatio * 6}px)` : 'none',
+            }}
+          >
+            <div className="space-y-8 lg:space-y-10">
+              {/* Header with Title & Context */}
+              <div className="text-center space-y-2.5">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-950 dark:text-white tracking-tight leading-[1.18]">
+                  Pick a time{' '}
+                  <span className="font-serif italic font-normal text-rose-600 dark:text-rose-500">
+                    that works.
+                  </span>
+                </h2>
+
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-xl mx-auto">
+                  All times are shown in Eastern Time (Dover, DE). Reschedule freely up to 24 hours before.
+                </p>
+
+                {/* 3 Quick Value Badges */}
+                <div className="pt-1 flex flex-wrap items-center justify-center gap-y-2 gap-x-6 text-xs text-slate-500 dark:text-slate-400">
+                  <div className="flex items-center gap-1.5">
+                    <Video className="w-3.5 h-3.5 text-slate-700 dark:text-slate-300" />
+                    <span>1-on-1 video call via Google Meet</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 text-slate-700 dark:text-slate-300" />
+                    <span>Starts at 30 minutes</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Shield className="w-3.5 h-3.5 text-slate-700 dark:text-slate-300" />
+                    <span>Free to reserve - invoice sent after</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* STEP PROGRESS TRACKER */}
+              <div className="bg-slate-50 dark:bg-slate-800/60 p-1.5 sm:p-2 rounded-full border border-slate-200/80 dark:border-slate-700 max-w-xl mx-auto flex items-center justify-between">
+                {[
+                  { stepNum: 1, label: '01 Plan' },
+                  { stepNum: 2, label: '02 Date & Time' },
+                  { stepNum: 3, label: '03 Your Details' },
+                  { stepNum: 4, label: '04 Confirmation' },
+                ].map((s) => (
+                  <button
+                    key={s.stepNum}
+                    onClick={() => {
+                      if (s.stepNum < scheduleStep || (s.stepNum === 2 && selectedPlanId)) {
+                        setScheduleStep(s.stepNum);
+                      }
+                    }}
+                    className={cn(
+                      'flex-1 py-1.5 px-2 rounded-full text-xs font-bold transition-all text-center flex items-center justify-center gap-1 cursor-pointer',
+                      scheduleStep === s.stepNum
+                        ? 'bg-slate-950 dark:bg-white text-white dark:text-slate-950 shadow-sm'
+                        : scheduleStep > s.stepNum
+                        ? 'text-slate-800 dark:text-slate-200 font-semibold'
+                        : 'text-slate-400 dark:text-slate-500 cursor-not-allowed'
+                    )}
+                  >
+                    {scheduleStep > s.stepNum && <CheckCircle2 className="w-3 h-3 text-rose-600 dark:text-rose-500 shrink-0" />}
+                    <span>{s.label}</span>
+                  </button>
+                ))}
+              </div>
+
+              {/* STEP 1: CHOOSE A PLAN */}
+              {scheduleStep === 1 && (
+                <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-5 sm:p-7 rounded-2xl shadow-sm space-y-4 animate-fadeIn max-h-[380px] overflow-y-auto">
+                  <div className="border-b border-slate-100 dark:border-slate-800 pb-3 flex items-center justify-between">
+                    <div>
+                      <h3 className="text-base sm:text-lg font-bold text-slate-950 dark:text-white">
+                        Step 1: Choose Your Consultation Format
+                      </h3>
+                    </div>
+                    <span className="text-xs font-mono text-slate-400">1 of 3</span>
+                  </div>
+
+                  <div className="space-y-2.5">
+                    {allAvailablePlans.map((plan) => {
+                      const isSelected = selectedPlanId === plan.id;
+                      return (
+                        <div
+                          key={plan.id}
+                          onClick={() => setSelectedPlanId(plan.id)}
+                          className={cn(
+                            'p-3.5 sm:p-4 rounded-xl border transition-all duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 cursor-pointer group',
+                            isSelected
+                              ? 'bg-slate-50 dark:bg-slate-800/90 border-slate-950 dark:border-white shadow-sm ring-1 ring-slate-950/10'
+                              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600'
+                          )}
+                        >
+                          <div className="flex items-start gap-3">
+                            <div
+                              className={cn(
+                                'w-4 h-4 rounded-full border-2 flex items-center justify-center mt-0.5 shrink-0 transition-colors',
+                                isSelected
+                                  ? 'border-rose-600 dark:border-rose-500 bg-rose-600 dark:bg-rose-500'
+                                  : 'border-slate-300 dark:border-slate-600 group-hover:border-slate-400'
+                              )}
+                            >
+                              {isSelected && <div className="w-1 h-1 rounded-full bg-white" />}
+                            </div>
+                            <div className="space-y-0.5">
+                              <div className="flex items-center gap-2">
+                                <span className="font-bold text-xs sm:text-sm text-slate-950 dark:text-white">
+                                  {plan.name}
+                                </span>
+                                {plan.popular && (
+                                  <span className="px-2 py-0.2 rounded-full bg-rose-50 dark:bg-rose-950/50 text-[9px] font-bold text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800">
+                                    {plan.popularBadge}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                                {plan.subtitle}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between sm:justify-end gap-3 pl-7 sm:pl-0">
+                            <span className="text-[11px] font-medium text-slate-400">
+                              {plan.duration}
+                            </span>
+                            <div className="text-right">
+                              <span className="text-sm sm:text-base font-black font-mono text-slate-950 dark:text-white">
+                                {plan.price}
+                              </span>
+                              <span className="text-[10px] text-slate-400 ml-1">
+                                {plan.period}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                    <button
+                      onClick={() => setScheduleStep(2)}
+                      className="h-11 px-6 rounded-full bg-slate-950 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-slate-950 text-xs sm:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer shadow-sm active:scale-98"
+                    >
+                      <span>Continue to Date & Time</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 2: SELECT DATE & TIME */}
+              {scheduleStep === 2 && (
+                <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-5 sm:p-7 rounded-2xl shadow-sm space-y-4 animate-fadeIn">
+                  <div className="border-b border-slate-100 dark:border-slate-800 pb-3 flex items-center justify-between">
+                    <div>
+                      <h3 className="text-base sm:text-lg font-bold text-slate-950 dark:text-white">
+                        Step 2: Select Date & Time
+                      </h3>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        Selected Plan: <strong className="text-slate-900 dark:text-white">{selectedPlanObj.name}</strong> ({selectedPlanObj.price})
+                      </p>
+                    </div>
+                    <span className="text-xs font-mono text-slate-400">2 of 3</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+                    <div className="md:col-span-6 bg-slate-50/70 dark:bg-slate-800/40 p-4 rounded-xl border border-slate-200/80 dark:border-slate-700 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">SELECT A DATE</span>
+                        <span className="text-xs font-bold text-slate-950 dark:text-white">August 2026</span>
+                      </div>
+
+                      <div className="grid grid-cols-7 gap-1 text-center text-xs">
+                        {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, dIdx) => (
+                          <div key={dIdx} className="font-bold text-slate-400 py-0.5 text-[10px]">
+                            {day}
+                          </div>
+                        ))}
+                        <div className="py-1 text-slate-300"></div>
+                        <div className="py-1 text-slate-300"></div>
+                        <div className="py-1 text-slate-300"></div>
+                        <div className="py-1 text-slate-300"></div>
+                        <div className="py-1 text-slate-300"></div>
+                        <div className="py-1 text-slate-300">1</div>
+                        <div className="py-1 text-slate-300">2</div>
+
+                        {[3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31].map((dateNum) => {
+                          const isSelected = selectedDate === dateNum;
+                          const isAvailable = dateNum >= 20;
+
+                          return (
+                            <button
+                              key={dateNum}
+                              disabled={!isAvailable}
+                              onClick={() => setSelectedDate(dateNum)}
+                              className={cn(
+                                'py-1.5 rounded-lg font-mono text-[11px] font-semibold transition-all cursor-pointer',
+                                isSelected
+                                  ? 'bg-slate-950 dark:bg-white text-white dark:text-slate-950 font-bold shadow-xs'
+                                  : isAvailable
+                                  ? 'hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-transparent'
+                                  : 'text-slate-300 dark:text-slate-600 cursor-not-allowed'
+                              )}
+                            >
+                              {dateNum}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <div className="md:col-span-6 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">SELECT A TIME</span>
+                        <span className="text-xs font-semibold text-rose-600 dark:text-rose-400">
+                          Thursday, Aug {selectedDate}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 max-h-[210px] overflow-y-auto pr-1">
+                        {timeSlots.map((time) => {
+                          const isSelected = selectedTime === time;
+                          return (
+                            <button
+                              key={time}
+                              onClick={() => setSelectedTime(time)}
+                              className={cn(
+                                'py-2 px-2.5 rounded-lg text-xs font-mono font-bold border transition-all text-center cursor-pointer',
+                                isSelected
+                                  ? 'bg-slate-950 dark:bg-white text-white dark:text-slate-950 border-slate-950 dark:border-white shadow-xs'
+                                  : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-400 dark:hover:border-slate-600'
+                              )}
+                            >
+                              {time}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                    <button
+                      onClick={() => setScheduleStep(1)}
+                      className="px-4 py-2 rounded-full border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all cursor-pointer flex items-center gap-1.5"
+                    >
+                      <ArrowLeft className="w-3.5 h-3.5" />
+                      <span>Back</span>
+                    </button>
+
+                    <button
+                      onClick={() => setScheduleStep(3)}
+                      className="h-11 px-6 rounded-full bg-slate-950 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-slate-950 text-xs sm:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer shadow-sm active:scale-98"
+                    >
+                      <span>Continue</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 3: CONTACT INFORMATION */}
+              {scheduleStep === 3 && (
+                <form
+                  onSubmit={handleBookingSubmit}
+                  className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-5 sm:p-7 rounded-2xl shadow-sm space-y-4 animate-fadeIn max-h-[380px] overflow-y-auto"
+                >
+                  <div className="border-b border-slate-100 dark:border-slate-800 pb-3 flex items-center justify-between">
+                    <div>
+                      <h3 className="text-base sm:text-lg font-bold text-slate-950 dark:text-white">
+                        Step 3: Your Information
+                      </h3>
+                    </div>
+                    <span className="text-xs font-mono text-slate-400">3 of 3</span>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 flex flex-wrap items-center justify-between gap-2 text-xs">
+                    <div className="flex items-center gap-2">
+                      <CalendarCheck className="w-3.5 h-3.5 text-rose-600 dark:text-rose-500" />
+                      <span className="font-bold text-slate-900 dark:text-white">{selectedPlanObj.name}</span>
+                      <span className="text-slate-400">•</span>
+                      <span className="text-slate-600 dark:text-slate-300">Thu, Aug {selectedDate} at {selectedTime} (EDT)</span>
+                    </div>
+                    <span className="font-mono font-bold text-slate-900 dark:text-white">{selectedPlanObj.price}</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                        NAME *
+                      </label>
+                      <div className="relative">
+                        <User className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                        <input
+                          type="text"
+                          required
+                          placeholder="Your full name"
+                          value={bookingFormData.name}
+                          onChange={(e) => setBookingFormData({ ...bookingFormData, name: e.target.value })}
+                          className="w-full h-10 pl-9 pr-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-slate-900 dark:focus:border-white transition-colors"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                        EMAIL *
+                      </label>
+                      <div className="relative">
+                        <Mail className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                        <input
+                          type="email"
+                          required
+                          placeholder="you@company.com"
+                          value={bookingFormData.email}
+                          onChange={(e) => setBookingFormData({ ...bookingFormData, email: e.target.value })}
+                          className="w-full h-10 pl-9 pr-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-slate-900 dark:focus:border-white transition-colors"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="sm:col-span-2 space-y-1">
+                      <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                        PHONE (OPTIONAL)
+                      </label>
+                      <div className="relative">
+                        <Phone className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                        <input
+                          type="tel"
+                          placeholder="+1 (555) 000-0000"
+                          value={bookingFormData.phone}
+                          onChange={(e) => setBookingFormData({ ...bookingFormData, phone: e.target.value })}
+                          className="w-full h-10 pl-9 pr-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-slate-900 dark:focus:border-white transition-colors"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                    <button
+                      type="button"
+                      onClick={() => setScheduleStep(2)}
+                      className="px-4 py-2 rounded-full border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all cursor-pointer flex items-center gap-1.5"
+                    >
+                      <ArrowLeft className="w-3.5 h-3.5" />
+                      <span>Back</span>
+                    </button>
+
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="h-11 px-7 rounded-full bg-slate-950 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-slate-950 text-xs sm:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer shadow-sm active:scale-98 disabled:opacity-50"
+                    >
+                      <span>{isSubmitting ? 'Booking Session...' : 'Confirm & Reserve Meeting'}</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              {/* STEP 4: SUCCESS CONFIRMATION MODAL / SCREEN */}
+              {scheduleStep === 4 && isBookingSubmitted && (
+                <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-6 sm:p-8 rounded-2xl shadow-xl text-center space-y-4 animate-fadeIn max-w-lg mx-auto">
+                  <div className="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto">
+                    <CheckCircle2 className="w-6 h-6" />
+                  </div>
+
+                  <div className="space-y-1">
+                    <h3 className="text-xl sm:text-2xl font-bold text-slate-950 dark:text-white">
+                      You're all scheduled!
+                    </h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 max-w-md mx-auto">
+                      We've sent a calendar invitation and meeting link to <strong className="text-slate-900 dark:text-white">{bookingFormData.email || 'your email'}</strong>.
+                    </p>
+                  </div>
+
+                  <div className="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-200/80 dark:border-slate-700 text-left space-y-2 text-xs">
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Plan:</span>
+                      <span className="font-bold text-slate-900 dark:text-white">{selectedPlanObj.name} ({selectedPlanObj.price})</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Date & Time:</span>
+                      <span className="font-bold text-slate-900 dark:text-white">Thursday, Aug {selectedDate}, 2026 at {selectedTime} (EDT)</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Location:</span>
+                      <span className="font-bold text-slate-900 dark:text-white">Google Meet Video Call</span>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 flex justify-center gap-3">
+                    <button
+                      onClick={() => {
+                        setScheduleStep(1);
+                        setIsBookingSubmitted(false);
+                      }}
+                      className="px-5 py-2 rounded-full border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all cursor-pointer"
+                    >
+                      Schedule Another Time
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* ========================================================= */}
+          {/* LAYER 2: TESTIMONIALS MASONRY WALL ("What founders say")   */}
+          {/* ========================================================= */}
+          <div
+            id="testimonials"
+            className={cn(
+              'w-full max-w-6xl mx-auto px-4 sm:px-6 transition-all duration-500 ease-out absolute inset-x-0 my-auto',
+              scheduleStackProgress >= 0.45 ? 'pointer-events-auto' : 'pointer-events-none'
+            )}
+            style={{
+              transform: isScheduleTransitioning
+                ? `translateY(${(1 - scheduleTransitionRatio) * 115}%) scale(${0.92 + scheduleTransitionRatio * 0.08})`
+                : 'translateY(120%) scale(0.92)',
+              opacity: isScheduleTransitioning ? Math.min(scheduleTransitionRatio * 1.5, 1) : 0,
+            }}
+          >
+            <div className="space-y-8 lg:space-y-10">
+              {/* Header: Rating Badge + Headline + Subtitle */}
+              <div className="text-center space-y-3 max-w-3xl mx-auto">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-semibold shadow-2xs">
+                  <div className="flex text-amber-400">
+                    <Star className="w-3.5 h-3.5 fill-amber-400" />
+                    <Star className="w-3.5 h-3.5 fill-amber-400" />
+                    <Star className="w-3.5 h-3.5 fill-amber-400" />
+                    <Star className="w-3.5 h-3.5 fill-amber-400" />
+                    <Star className="w-3.5 h-3.5 fill-amber-400" />
+                  </div>
+                  <span className="font-bold text-slate-950 dark:text-white">4.9/5</span>
+                  <span className="text-slate-300 dark:text-slate-600">•</span>
+                  <span className="text-slate-600 dark:text-slate-300">From 47 founder-led brands</span>
+                </div>
+
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-950 dark:text-white tracking-tight leading-[1.18]">
+                  What the founders{' '}
+                  <span className="font-serif italic font-normal text-rose-600 dark:text-rose-500">
+                    actually say.
+                  </span>
+                </h2>
+
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-xl mx-auto">
+                  Real feedback from founders and operators who scaled their revenue, eliminated operational drag, and deployed AI into production.
+                </p>
+              </div>
+
+              {/* Testimonials Masonry Wall Container with Top/Bottom Gradient Mask */}
+              <div className="relative h-[480px] sm:h-[540px] overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_8%,black_92%,transparent)]">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 items-start h-full">
+                  {/* Column 1 */}
+                  <div className="space-y-4 sm:space-y-5 animate-marquee-vertical">
+                    {[
+                      {
+                        quote:
+                          'When I first partnered with Contents LLC, I was at a crossroads with our growth funnel. We had strong marketing ideas but lacked the technical automation to execute them at scale. They gave us the architecture, AI agents, and complete clarity we needed to move forward.',
+                        author: 'Emily Johnson',
+                        role: 'Founder, Aster Beauty',
+                        avatar: 'EJ',
+                      },
+                      {
+                        quote:
+                          'Contents LLC automated our client reporting and lead triage in less than three weeks. What used to take our ops team 15 hours every week now runs automatically in the background. The ROI was obvious within the first month.',
+                        author: 'Michael Roberts',
+                        role: 'Managing Director, Mellow Foods',
+                        avatar: 'MR',
+                      },
+                      {
+                        quote:
+                          'Our organic conversion and ad efficiency doubled after deploying their AI automation pipeline. Their tactical approach and deep technical understanding made the entire integration frictionless.',
+                        author: 'Rachel Adams',
+                        role: 'Head of Growth, Hemlock Studio',
+                        avatar: 'RA',
+                      },
+                      {
+                        quote:
+                          'When I first partnered with Contents LLC, I was at a crossroads with our growth funnel. We had strong marketing ideas but lacked the technical automation to execute them at scale. They gave us the architecture, AI agents, and complete clarity we needed to move forward.',
+                        author: 'Emily Johnson',
+                        role: 'Founder, Aster Beauty',
+                        avatar: 'EJ',
+                      },
+                      {
+                        quote:
+                          'Contents LLC automated our client reporting and lead triage in less than three weeks. What used to take our ops team 15 hours every week now runs automatically in the background. The ROI was obvious within the first month.',
+                        author: 'Michael Roberts',
+                        role: 'Managing Director, Mellow Foods',
+                        avatar: 'MR',
+                      },
+                      {
+                        quote:
+                          'Our organic conversion and ad efficiency doubled after deploying their AI automation pipeline. Their tactical approach and deep technical understanding made the entire integration frictionless.',
+                        author: 'Rachel Adams',
+                        role: 'Head of Growth, Hemlock Studio',
+                        avatar: 'RA',
+                      },
+                    ].map((card, cIdx) => (
+                      <div
+                        key={cIdx}
+                        className="bg-white/95 dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-800 p-5 sm:p-6 rounded-2xl shadow-xs hover:shadow-lg hover:border-slate-400 dark:hover:border-slate-600 transition-all duration-300 space-y-3 group"
+                      >
+                        <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-normal">
+                          "{card.quote}"
+                        </p>
+
+                        <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-2">
+                            <div className="w-7 h-7 rounded-full bg-slate-950 dark:bg-white text-white dark:text-slate-950 font-bold text-xs flex items-center justify-center shrink-0">
+                              {card.avatar}
+                            </div>
+                            <div>
+                              <div className="text-xs font-bold text-slate-950 dark:text-white">
+                                {card.author}
+                              </div>
+                              <div className="text-[10px] text-slate-500 dark:text-slate-400">
+                                {card.role}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex text-amber-400 shrink-0">
+                            <Star className="w-3 h-3 fill-amber-400" />
+                            <Star className="w-3 h-3 fill-amber-400" />
+                            <Star className="w-3 h-3 fill-amber-400" />
+                            <Star className="w-3 h-3 fill-amber-400" />
+                            <Star className="w-3 h-3 fill-amber-400" />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Column 2 */}
+                  <div className="space-y-4 sm:space-y-5 animate-marquee-vertical-slow">
+                    {[
+                      {
+                        quote:
+                          'Most consultants sell you 60-page decks and theoretical frameworks. Contents LLC actually built and shipped working AI systems into our live workflow. They moved us from understanding the problem to full production in record time.',
+                        author: 'James Wilson',
+                        role: 'CEO, Northbound',
+                        avatar: 'JW',
+                      },
+                      {
+                        quote:
+                          'The Strategy Intensive gave us complete clarity on our AI roadmap for the next 12 months. Invoicing was straightforward, execution was lightning-fast, and the results speak directly to our bottom line.',
+                        author: 'Sarah Lee',
+                        role: 'Founder, Brickhouse',
+                        avatar: 'SL',
+                      },
+                      {
+                        quote:
+                          'Having their team on call as a monthly partner feels like having a world-class AI architect in-house without the massive payroll overhead. Best business decision we made this year.',
+                        author: 'David Chen',
+                        role: 'Founder, Prairie Operations',
+                        avatar: 'DC',
+                      },
+                      {
+                        quote:
+                          'Most consultants sell you 60-page decks and theoretical frameworks. Contents LLC actually built and shipped working AI systems into our live workflow. They moved us from understanding the problem to full production in record time.',
+                        author: 'James Wilson',
+                        role: 'CEO, Northbound',
+                        avatar: 'JW',
+                      },
+                      {
+                        quote:
+                          'The Strategy Intensive gave us complete clarity on our AI roadmap for the next 12 months. Invoicing was straightforward, execution was lightning-fast, and the results speak directly to our bottom line.',
+                        author: 'Sarah Lee',
+                        role: 'Founder, Brickhouse',
+                        avatar: 'SL',
+                      },
+                      {
+                        quote:
+                          'Having their team on call as a monthly partner feels like having a world-class AI architect in-house without the massive payroll overhead. Best business decision we made this year.',
+                        author: 'David Chen',
+                        role: 'Founder, Prairie Operations',
+                        avatar: 'DC',
+                      },
+                    ].map((card, cIdx) => (
+                      <div
+                        key={cIdx}
+                        className="bg-white/95 dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-800 p-5 sm:p-6 rounded-2xl shadow-xs hover:shadow-lg hover:border-slate-400 dark:hover:border-slate-600 transition-all duration-300 space-y-3 group"
+                      >
+                        <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-normal">
+                          "{card.quote}"
+                        </p>
+
+                        <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-2">
+                            <div className="w-7 h-7 rounded-full bg-slate-950 dark:bg-white text-white dark:text-slate-950 font-bold text-xs flex items-center justify-center shrink-0">
+                              {card.avatar}
+                            </div>
+                            <div>
+                              <div className="text-xs font-bold text-slate-950 dark:text-white">
+                                {card.author}
+                              </div>
+                              <div className="text-[10px] text-slate-500 dark:text-slate-400">
+                                {card.role}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex text-amber-400 shrink-0">
+                            <Star className="w-3 h-3 fill-amber-400" />
+                            <Star className="w-3 h-3 fill-amber-400" />
+                            <Star className="w-3 h-3 fill-amber-400" />
+                            <Star className="w-3 h-3 fill-amber-400" />
+                            <Star className="w-3 h-3 fill-amber-400" />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Column 3 */}
+                  <div className="hidden lg:block space-y-4 sm:space-y-5 animate-marquee-vertical-fast">
+                    {[
+                      {
+                        quote:
+                          'Before Contents LLC, we were trying to stitch together random AI APIs with no real strategy. Their team came in, designed a clean enterprise RAG system around our actual data, and made everything feel simple and actionable.',
+                        author: 'Laura Smith',
+                        role: 'Co-Founder, Paperbird',
+                        avatar: 'LS',
+                      },
+                      {
+                        quote:
+                          'Three weeks after implementing their AI-driven workflow, our customer response turnaround dropped from 4 hours to under 2 minutes. The project-based execution and hands-on support truly set them apart.',
+                        author: 'Chris Brown',
+                        role: 'CTO, Lumen',
+                        avatar: 'CB',
+                      },
+                      {
+                        quote:
+                          'Compared to traditional agencies, Contents LLC offers incredible precision and speed. The custom AI tooling they built for our team is used every single day across all departments.',
+                        author: 'Sophia Martinez',
+                        role: 'COO, Northbound Operations',
+                        avatar: 'SM',
+                      },
+                      {
+                        quote:
+                          'Before Contents LLC, we were trying to stitch together random AI APIs with no real strategy. Their team came in, designed a clean enterprise RAG system around our actual data, and made everything feel simple and actionable.',
+                        author: 'Laura Smith',
+                        role: 'Co-Founder, Paperbird',
+                        avatar: 'LS',
+                      },
+                      {
+                        quote:
+                          'Three weeks after implementing their AI-driven workflow, our customer response turnaround dropped from 4 hours to under 2 minutes. The project-based execution and hands-on support truly set them apart.',
+                        author: 'Chris Brown',
+                        role: 'CTO, Lumen',
+                        avatar: 'CB',
+                      },
+                      {
+                        quote:
+                          'Compared to traditional agencies, Contents LLC offers incredible precision and speed. The custom AI tooling they built for our team is used every single day across all departments.',
+                        author: 'Sophia Martinez',
+                        role: 'COO, Northbound Operations',
+                        avatar: 'SM',
+                      },
+                    ].map((card, cIdx) => (
+                      <div
+                        key={cIdx}
+                        className="bg-white/95 dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-800 p-5 sm:p-6 rounded-2xl shadow-xs hover:shadow-lg hover:border-slate-400 dark:hover:border-slate-600 transition-all duration-300 space-y-3 group"
+                      >
+                        <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-normal">
+                          "{card.quote}"
+                        </p>
+
+                        <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-2">
+                            <div className="w-7 h-7 rounded-full bg-slate-950 dark:bg-white text-white dark:text-slate-950 font-bold text-xs flex items-center justify-center shrink-0">
+                              {card.avatar}
+                            </div>
+                            <div>
+                              <div className="text-xs font-bold text-slate-950 dark:text-white">
+                                {card.author}
+                              </div>
+                              <div className="text-[10px] text-slate-500 dark:text-slate-400">
+                                {card.role}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex text-amber-400 shrink-0">
+                            <Star className="w-3 h-3 fill-amber-400" />
+                            <Star className="w-3 h-3 fill-amber-400" />
+                            <Star className="w-3 h-3 fill-amber-400" />
+                            <Star className="w-3 h-3 fill-amber-400" />
+                            <Star className="w-3 h-3 fill-amber-400" />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* ========================================================= */}
+      {/* SECTION 10: FAQ (Questions, answered.)                    */}
+      {/* ========================================================= */}
+      <section
+        id="faq"
+        className="relative pt-8 pb-24 lg:pt-10 lg:pb-32 bg-white dark:bg-slate-900 overflow-hidden"
+      >
+        <Container>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+            {/* Left Column: Heading, Subtitle, CTA Button & Isometric graphic */}
+            <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-24">
+              <div className="space-y-4">
+                <h2 className="text-4xl sm:text-5xl lg:text-6xl font-serif italic text-slate-950 dark:text-white tracking-tight leading-[1.12]">
+                  Frequently Asked <br />
+                  <span className="font-sans font-black not-italic text-slate-950 dark:text-white">
+                    Questions
+                  </span>
+                </h2>
+
+                <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed max-w-md font-normal">
+                  Got questions? We've got answers! Browse our FAQ, or reach out anytime — we're here to help make your journey smooth sailing.
+                </p>
+              </div>
+
+              {/* Action Button: Reach Out */}
+              <div className="pt-2">
+                <a href="#schedule">
+                  <button className="h-12 px-8 rounded-full bg-slate-950 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-slate-950 text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer active:scale-98">
+                    <span>Reach Out</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </a>
+              </div>
+
+              {/* Isometric / Modern Graphic Widget */}
+              <div className="pt-8 hidden sm:block">
+                <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-700/60 flex items-center gap-4 max-w-sm">
+                  <div className="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-rose-600 dark:text-rose-400 shadow-2xs shrink-0">
+                    <MessageSquare className="w-6 h-6" />
+                  </div>
+                  <div className="space-y-0.5">
+                    <div className="text-xs sm:text-sm font-bold text-slate-950 dark:text-white">
+                      Need custom consultation?
+                    </div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400">
+                      Book a call and talk directly to our team.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Accordion Questions List */}
+            <div className="lg:col-span-7 border-t border-slate-200 dark:border-slate-800 divide-y divide-slate-200 dark:divide-slate-800">
+              {faqItems.map((faq, fIdx) => {
+                const isOpen = openFaqIndex === fIdx;
+
+                return (
+                  <div key={fIdx} className="transition-colors">
+                    <button
+                      onClick={() => setOpenFaqIndex(isOpen ? null : fIdx)}
+                      className="w-full py-5 sm:py-6 text-left flex items-center justify-between gap-4 group cursor-pointer"
+                    >
+                      <span className="text-base sm:text-lg font-bold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">
+                        {faq.question}
+                      </span>
+                      <div
+                        className={cn(
+                          'w-8 h-8 rounded-full border flex items-center justify-center transition-all shrink-0',
+                          isOpen
+                            ? 'bg-slate-950 dark:bg-white text-white dark:text-slate-950 border-slate-950 dark:border-white shadow-2xs rotate-45'
+                            : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 group-hover:border-slate-400 dark:group-hover:border-slate-500'
+                        )}
+                      >
+                        <Plus className="w-4 h-4 transition-transform duration-300" />
+                      </div>
+                    </button>
+
+                    {/* Answer Reveal */}
+                    <div
+                      className={cn(
+                        'overflow-hidden transition-all duration-300 ease-in-out',
+                        isOpen ? 'max-h-96 opacity-100 pb-6' : 'max-h-0 opacity-0 pb-0'
+                      )}
+                    >
+                      <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-normal pr-8">
+                        {faq.answer}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </Container>
       </section>
 
       {/* ========================================================= */}
-      {/* SECTION 8: PROGRESSIVE MULTI-STEP SCHEDULE WIZARD         */}
+      {/* SECTION 11: FINAL CTA                                     */}
       {/* ========================================================= */}
       <section
-        id="schedule"
-        className="relative py-24 lg:py-32 bg-white dark:bg-slate-900 border-t border-slate-200/80 dark:border-slate-800 overflow-hidden"
+        id="final-cta"
+        className="relative py-24 lg:py-36 bg-slate-50/70 dark:bg-slate-950/80 border-t border-slate-200/80 dark:border-slate-800 overflow-hidden text-center"
       >
+        {/* Subtle Ambient Radial Grid Glow */}
+        <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] dark:bg-[radial-gradient(#334155_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,black_70%,transparent_100%)] opacity-60 dark:opacity-30 -z-10 pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-rose-500/10 dark:bg-rose-950/20 blur-3xl pointer-events-none -z-10" />
+
         <Container>
-          <div className="max-w-4xl mx-auto space-y-10 lg:space-y-12">
-            {/* Header with Title & Context */}
-            <div className="text-center space-y-3">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-950 dark:text-white tracking-tight leading-[1.18]">
-                Pick a time{' '}
-                <span className="font-serif italic font-normal text-rose-600 dark:text-rose-500">
-                  that works.
-                </span>
-              </h2>
-
-              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-xl mx-auto">
-                All times are shown in Eastern Time (Dover, DE). Reschedule freely up to 24 hours before.
-              </p>
-
-              {/* 3 Quick Value Badges */}
-              <div className="pt-2 flex flex-wrap items-center justify-center gap-y-2 gap-x-6 text-xs text-slate-500 dark:text-slate-400">
-                <div className="flex items-center gap-1.5">
-                  <Video className="w-4 h-4 text-slate-700 dark:text-slate-300" />
-                  <span>1-on-1 video call via Google Meet</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Clock className="w-4 h-4 text-slate-700 dark:text-slate-300" />
-                  <span>Starts at 30 minutes</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Shield className="w-4 h-4 text-slate-700 dark:text-slate-300" />
-                  <span>Free to reserve - invoice sent after</span>
-                </div>
-              </div>
+          <div className="max-w-3xl mx-auto space-y-8">
+            {/* Sub-tag / Status pill */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 shadow-2xs">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500" />
+              </span>
+              <span>Ready to turn AI into real business impact?</span>
             </div>
 
-            {/* STEP PROGRESS TRACKER */}
-            <div className="bg-slate-50 dark:bg-slate-800/60 p-2 sm:p-2.5 rounded-full border border-slate-200/80 dark:border-slate-700 max-w-2xl mx-auto flex items-center justify-between">
-              {[
-                { stepNum: 1, label: '01 Plan' },
-                { stepNum: 2, label: '02 Date & Time' },
-                { stepNum: 3, label: '03 Your Details' },
-                { stepNum: 4, label: '04 Confirmation' },
-              ].map((s) => (
-                <button
-                  key={s.stepNum}
-                  onClick={() => {
-                    if (s.stepNum < scheduleStep || (s.stepNum === 2 && selectedPlanId)) {
-                      setScheduleStep(s.stepNum);
-                    }
-                  }}
-                  className={cn(
-                    'flex-1 py-2 px-2 sm:px-3 rounded-full text-xs font-bold transition-all text-center flex items-center justify-center gap-1 cursor-pointer',
-                    scheduleStep === s.stepNum
-                      ? 'bg-slate-950 dark:bg-white text-white dark:text-slate-950 shadow-sm'
-                      : scheduleStep > s.stepNum
-                      ? 'text-slate-800 dark:text-slate-200 font-semibold'
-                      : 'text-slate-400 dark:text-slate-500 cursor-not-allowed'
-                  )}
-                >
-                  {scheduleStep > s.stepNum && <CheckCircle2 className="w-3 h-3 text-rose-600 dark:text-rose-500 shrink-0" />}
-                  <span>{s.label}</span>
+            {/* Main Headline */}
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-950 dark:text-white tracking-tight leading-[1.14]">
+              Start with the problem.{' '}
+              <br className="hidden sm:block" />
+              <span className="font-serif italic font-normal text-rose-600 dark:text-rose-500">
+                We'll figure out the solution.
+              </span>
+            </h2>
+
+            {/* CTA Action Buttons */}
+            <div className="pt-2 flex flex-wrap items-center justify-center gap-3.5">
+              <a href="#schedule">
+                <button className="h-13 px-8 sm:px-9 rounded-full bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 font-bold text-sm sm:text-base shadow-lg shadow-slate-950/15 dark:shadow-none hover:shadow-xl transition-all flex items-center gap-2.5 cursor-pointer active:scale-98">
+                  <span>Book a consultation</span>
+                  <ArrowRight className="w-4 h-4" />
                 </button>
-              ))}
+              </a>
+
+              <a href="mailto:hello@contentsllc.com">
+                <button className="h-13 px-8 sm:px-9 rounded-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-sm sm:text-base shadow-2xs hover:shadow-xs transition-all flex items-center gap-2 cursor-pointer active:scale-98">
+                  <Mail className="w-4 h-4 text-slate-500" />
+                  <span>Or send us an email</span>
+                </button>
+              </a>
             </div>
 
-            {/* STEP 1: CHOOSE A PLAN */}
-            {scheduleStep === 1 && (
-              <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-6 sm:p-8 rounded-2xl shadow-sm space-y-6 animate-fadeIn">
-                <div className="border-b border-slate-100 dark:border-slate-800 pb-4 flex items-center justify-between">
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-950 dark:text-white">
-                      Step 1: Choose Your Consultation Format
-                    </h3>
-                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-                      Select the engagement model that matches your current stage.
-                    </p>
-                  </div>
-                  <span className="text-xs font-mono text-slate-400">1 of 3</span>
-                </div>
-
-                <div className="space-y-3">
-                  {allAvailablePlans.map((plan) => {
-                    const isSelected = selectedPlanId === plan.id;
-                    return (
-                      <div
-                        key={plan.id}
-                        onClick={() => setSelectedPlanId(plan.id)}
-                        className={cn(
-                          'p-4 sm:p-5 rounded-xl border transition-all duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer group',
-                          isSelected
-                            ? 'bg-slate-50 dark:bg-slate-800/90 border-slate-950 dark:border-white shadow-sm ring-1 ring-slate-950/10'
-                            : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600'
-                        )}
-                      >
-                        <div className="flex items-start gap-3.5">
-                          <div
-                            className={cn(
-                              'w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 shrink-0 transition-colors',
-                              isSelected
-                                ? 'border-rose-600 dark:border-rose-500 bg-rose-600 dark:bg-rose-500'
-                                : 'border-slate-300 dark:border-slate-600 group-hover:border-slate-400'
-                            )}
-                          >
-                            {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
-                          </div>
-                          <div className="space-y-0.5">
-                            <div className="flex items-center gap-2">
-                              <span className="font-bold text-sm sm:text-base text-slate-950 dark:text-white">
-                                {plan.name}
-                              </span>
-                              {plan.popular && (
-                                <span className="px-2 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-[10px] font-bold text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800">
-                                  {plan.popularBadge}
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-xs text-slate-500 dark:text-slate-400">
-                              {plan.subtitle}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center justify-between sm:justify-end gap-3 pl-8 sm:pl-0">
-                          <span className="text-xs font-medium text-slate-400">
-                            {plan.duration}
-                          </span>
-                          <div className="text-right">
-                            <span className="text-lg sm:text-xl font-black font-mono text-slate-950 dark:text-white">
-                              {plan.price}
-                            </span>
-                            <span className="text-[11px] text-slate-400 ml-1">
-                              {plan.period}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
-                  <button
-                    onClick={() => setScheduleStep(2)}
-                    className="h-12 px-7 rounded-full bg-slate-950 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-slate-950 text-xs sm:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer shadow-sm active:scale-98"
-                  >
-                    <span>Continue to Date & Time</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* STEP 2: SELECT DATE & TIME */}
-            {scheduleStep === 2 && (
-              <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-6 sm:p-8 rounded-2xl shadow-sm space-y-6 animate-fadeIn">
-                <div className="border-b border-slate-100 dark:border-slate-800 pb-4 flex items-center justify-between">
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-950 dark:text-white">
-                      Step 2: Select Date & Time
-                    </h3>
-                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-                      Selected Plan: <strong className="text-slate-900 dark:text-white">{selectedPlanObj.name}</strong> ({selectedPlanObj.price})
-                    </p>
-                  </div>
-                  <span className="text-xs font-mono text-slate-400">2 of 3</span>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-                  {/* Left: Interactive Calendar (August 2026) */}
-                  <div className="md:col-span-6 bg-slate-50/70 dark:bg-slate-800/40 p-5 rounded-xl border border-slate-200/80 dark:border-slate-700 space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold uppercase tracking-wider text-slate-500">SELECT A DATE</span>
-                      <span className="text-sm font-bold text-slate-950 dark:text-white">August 2026</span>
-                    </div>
-
-                    {/* Calendar Days Grid */}
-                    <div className="grid grid-cols-7 gap-1.5 text-center text-xs">
-                      {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, dIdx) => (
-                        <div key={dIdx} className="font-bold text-slate-400 py-1">
-                          {day}
-                        </div>
-                      ))}
-                      {/* Blank offset for August 2026 */}
-                      <div className="py-2 text-slate-300"></div>
-                      <div className="py-2 text-slate-300"></div>
-                      <div className="py-2 text-slate-300"></div>
-                      <div className="py-2 text-slate-300"></div>
-                      <div className="py-2 text-slate-300"></div>
-                      <div className="py-2 text-slate-300">1</div>
-                      <div className="py-2 text-slate-300">2</div>
-
-                      {[3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31].map((dateNum) => {
-                        const isSelected = selectedDate === dateNum;
-                        const isAvailable = dateNum >= 20;
-
-                        return (
-                          <button
-                            key={dateNum}
-                            disabled={!isAvailable}
-                            onClick={() => setSelectedDate(dateNum)}
-                            className={cn(
-                              'py-2 rounded-lg font-mono text-xs font-semibold transition-all cursor-pointer',
-                              isSelected
-                                ? 'bg-slate-950 dark:bg-white text-white dark:text-slate-950 font-bold shadow-xs'
-                                : isAvailable
-                                ? 'hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-transparent'
-                                : 'text-slate-300 dark:text-slate-600 cursor-not-allowed'
-                            )}
-                          >
-                            {dateNum}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Right: Time Slots Grid */}
-                  <div className="md:col-span-6 space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold uppercase tracking-wider text-slate-500">SELECT A TIME</span>
-                      <span className="text-xs font-semibold text-rose-600 dark:text-rose-400">
-                        Thursday, Aug {selectedDate}
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2 max-h-[260px] overflow-y-auto pr-1">
-                      {timeSlots.map((time) => {
-                        const isSelected = selectedTime === time;
-                        return (
-                          <button
-                            key={time}
-                            onClick={() => setSelectedTime(time)}
-                            className={cn(
-                              'py-2.5 px-3 rounded-lg text-xs font-mono font-bold border transition-all text-center cursor-pointer',
-                              isSelected
-                                ? 'bg-slate-950 dark:bg-white text-white dark:text-slate-950 border-slate-950 dark:border-white shadow-xs'
-                                : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-400 dark:hover:border-slate-600'
-                            )}
-                          >
-                            {time}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                  <button
-                    onClick={() => setScheduleStep(1)}
-                    className="px-5 py-2.5 rounded-full border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all cursor-pointer flex items-center gap-1.5"
-                  >
-                    <ArrowLeft className="w-3.5 h-3.5" />
-                    <span>Back to Plans</span>
-                  </button>
-
-                  <button
-                    onClick={() => setScheduleStep(3)}
-                    className="h-12 px-7 rounded-full bg-slate-950 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-slate-950 text-xs sm:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer shadow-sm active:scale-98"
-                  >
-                    <span>Continue to Your Details</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* STEP 3: CONTACT INFORMATION */}
-            {scheduleStep === 3 && (
-              <form
-                onSubmit={handleBookingSubmit}
-                className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-6 sm:p-8 rounded-2xl shadow-sm space-y-6 animate-fadeIn"
-              >
-                <div className="border-b border-slate-100 dark:border-slate-800 pb-4 flex items-center justify-between">
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-950 dark:text-white">
-                      Step 3: Your Information
-                    </h3>
-                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-                      We'll send the Google Meet invitation and booking confirmation here.
-                    </p>
-                  </div>
-                  <span className="text-xs font-mono text-slate-400">3 of 3</span>
-                </div>
-
-                {/* Selected Slot Recap Banner */}
-                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 flex flex-wrap items-center justify-between gap-3 text-xs">
-                  <div className="flex items-center gap-2">
-                    <CalendarCheck className="w-4 h-4 text-rose-600 dark:text-rose-500" />
-                    <span className="font-bold text-slate-900 dark:text-white">{selectedPlanObj.name}</span>
-                    <span className="text-slate-400">•</span>
-                    <span className="text-slate-600 dark:text-slate-300">Thursday, Aug {selectedDate}, 2026 at {selectedTime} (Eastern Time)</span>
-                  </div>
-                  <span className="font-mono font-bold text-slate-900 dark:text-white">{selectedPlanObj.price}</span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                      NAME *
-                    </label>
-                    <div className="relative">
-                      <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                      <input
-                        type="text"
-                        required
-                        placeholder="Your full name"
-                        value={bookingFormData.name}
-                        onChange={(e) => setBookingFormData({ ...bookingFormData, name: e.target.value })}
-                        className="w-full h-11 pl-10 pr-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:border-slate-900 dark:focus:border-white transition-colors"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                      EMAIL *
-                    </label>
-                    <div className="relative">
-                      <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                      <input
-                        type="email"
-                        required
-                        placeholder="you@company.com"
-                        value={bookingFormData.email}
-                        onChange={(e) => setBookingFormData({ ...bookingFormData, email: e.target.value })}
-                        className="w-full h-11 pl-10 pr-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:border-slate-900 dark:focus:border-white transition-colors"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="sm:col-span-2 space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                      PHONE (OPTIONAL)
-                    </label>
-                    <div className="relative">
-                      <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                      <input
-                        type="tel"
-                        placeholder="+1 (555) 000-0000"
-                        value={bookingFormData.phone}
-                        onChange={(e) => setBookingFormData({ ...bookingFormData, phone: e.target.value })}
-                        className="w-full h-11 pl-10 pr-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:border-slate-900 dark:focus:border-white transition-colors"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="sm:col-span-2 space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                      WHAT DO YOU WANT TO TACKLE? (OPTIONAL)
-                    </label>
-                    <div className="relative">
-                      <textarea
-                        rows={3}
-                        placeholder="Brief context: business, main goal, current blocker..."
-                        value={bookingFormData.topic}
-                        onChange={(e) => setBookingFormData({ ...bookingFormData, topic: e.target.value })}
-                        className="w-full p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:border-slate-900 dark:focus:border-white transition-colors resize-none"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                  <button
-                    type="button"
-                    onClick={() => setScheduleStep(2)}
-                    className="px-5 py-2.5 rounded-full border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all cursor-pointer flex items-center gap-1.5"
-                  >
-                    <ArrowLeft className="w-3.5 h-3.5" />
-                    <span>Back</span>
-                  </button>
-
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="h-12 px-8 rounded-full bg-slate-950 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-slate-950 text-xs sm:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer shadow-sm active:scale-98 disabled:opacity-50"
-                  >
-                    <span>{isSubmitting ? 'Booking Session...' : 'Confirm & Reserve Meeting'}</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </div>
-              </form>
-            )}
-
-            {/* STEP 4: SUCCESS CONFIRMATION MODAL / SCREEN */}
-            {scheduleStep === 4 && isBookingSubmitted && (
-              <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-8 sm:p-12 rounded-2xl shadow-xl text-center space-y-6 animate-fadeIn max-w-xl mx-auto">
-                <div className="w-16 h-16 rounded-full bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto">
-                  <CheckCircle2 className="w-8 h-8" />
-                </div>
-
-                <div className="space-y-2">
-                  <h3 className="text-2xl sm:text-3xl font-bold text-slate-950 dark:text-white">
-                    You're all scheduled!
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-md mx-auto">
-                    We've sent a calendar invitation and meeting link to <strong className="text-slate-900 dark:text-white">{bookingFormData.email || 'your email'}</strong>.
-                  </p>
-                </div>
-
-                {/* Summary Card */}
-                <div className="bg-slate-50 dark:bg-slate-800/60 p-5 rounded-xl border border-slate-200/80 dark:border-slate-700 text-left space-y-3 text-xs">
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Plan:</span>
-                    <span className="font-bold text-slate-900 dark:text-white">{selectedPlanObj.name} ({selectedPlanObj.price})</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Date & Time:</span>
-                    <span className="font-bold text-slate-900 dark:text-white">Thursday, Aug {selectedDate}, 2026 at {selectedTime} (EDT)</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Location:</span>
-                    <span className="font-bold text-slate-900 dark:text-white">Google Meet Video Call</span>
-                  </div>
-                  <div className="flex justify-between border-t border-slate-200 dark:border-slate-700 pt-2">
-                    <span className="text-slate-500">Payment:</span>
-                    <span className="font-bold text-emerald-600 dark:text-emerald-400">Invoice sent separately after booking</span>
-                  </div>
-                </div>
-
-                <div className="pt-2 flex justify-center gap-3">
-                  <button
-                    onClick={() => {
-                      setScheduleStep(1);
-                      setIsBookingSubmitted(false);
-                    }}
-                    className="px-6 py-2.5 rounded-full border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all cursor-pointer"
-                  >
-                    Schedule Another Time
-                  </button>
-                </div>
-              </div>
-            )}
+            {/* Reassurance text */}
+            <div className="pt-2 flex items-center justify-center gap-2 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <span>We'll get back to you shortly.</span>
+            </div>
           </div>
         </Container>
       </section>
