@@ -299,6 +299,33 @@ Would you like to schedule a 1-on-1 session or explore our capabilities?`,
     };
   };
 
+  // Helper to render bold markdown (**text**)
+  const renderFormattedText = (text: string) => {
+    const lines = text.split('\n');
+    return (
+      <div className="space-y-1">
+        {lines.map((line, lIdx) => {
+          if (!line.trim()) return <div key={lIdx} className="h-1.5" />;
+          const parts = line.split(/(\*\*.*?\*\*)/g);
+          return (
+            <p key={lIdx} className="leading-relaxed">
+              {parts.map((part, pIdx) => {
+                if (part.startsWith('**') && part.endsWith('**')) {
+                  return (
+                    <strong key={pIdx} className="font-bold text-slate-950 dark:text-white">
+                      {part.slice(2, -2)}
+                    </strong>
+                  );
+                }
+                return part;
+              })}
+            </p>
+          );
+        })}
+      </div>
+    );
+  };
+
   const handleReset = () => {
     setCurrentStep('departments');
     setSelectedDeptKey(null);
@@ -313,10 +340,10 @@ Would you like to schedule a 1-on-1 session or explore our capabilities?`,
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="group relative flex items-center gap-2 h-12 px-4 rounded-full bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 shadow-xl border border-slate-800 dark:border-slate-200 transition-all duration-300 cursor-pointer active:scale-95"
+          className="group relative flex items-center gap-2 h-12 px-4 rounded-full bg-slate-950 hover:bg-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800 text-white shadow-xl border border-slate-800 dark:border-slate-700 transition-all duration-300 cursor-pointer active:scale-95"
           title="Open Assistant"
         >
-          <MessageSquare className="w-4 h-4 text-white dark:text-slate-950" />
+          <MessageSquare className="w-4 h-4 text-white" />
           <span className="text-xs font-bold tracking-tight">
             Chat with us
           </span>
@@ -325,10 +352,10 @@ Would you like to schedule a 1-on-1 session or explore our capabilities?`,
 
       {/* 2. CHAT MODAL WINDOW */}
       {isOpen && (
-        <div className="w-[350px] sm:w-[380px] max-w-[calc(100vw-24px)] h-[520px] max-h-[calc(100vh-80px)] bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-slideUp">
+        <div className="w-[350px] sm:w-[380px] max-w-[calc(100vw-24px)] h-[520px] max-h-[calc(100vh-80px)] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-slideUp">
           
-          {/* HEADER BAR (Clean, Non-cluttered) */}
-          <div className="bg-slate-950 dark:bg-slate-900 text-white px-4 py-3.5 flex items-center justify-between border-b border-slate-800/90 shrink-0">
+          {/* HEADER BAR */}
+          <div className="bg-slate-950 dark:bg-slate-950 text-white px-4 py-3.5 flex items-center justify-between border-b border-slate-800/90 shrink-0">
             <div>
               <h3 className="text-xs font-bold text-white tracking-tight">
                 Contents Assistant
@@ -362,7 +389,7 @@ Would you like to schedule a 1-on-1 session or explore our capabilities?`,
           {/* VIEW 1: WELCOME & DEPARTMENT SELECTION                    */}
           {/* ========================================================= */}
           {currentStep === 'departments' && (
-            <div className="flex-1 overflow-y-auto p-5 space-y-6 flex flex-col justify-center bg-slate-50/40 dark:bg-slate-950">
+            <div className="flex-1 overflow-y-auto p-5 space-y-6 flex flex-col justify-center bg-slate-50/40 dark:bg-slate-900/60">
               {/* Clean Typography Intro */}
               <div className="text-center space-y-1.5 px-2">
                 <h4 className="text-lg sm:text-xl font-extrabold text-slate-950 dark:text-white tracking-tight leading-snug">
@@ -373,7 +400,7 @@ Would you like to schedule a 1-on-1 session or explore our capabilities?`,
                 </p>
               </div>
 
-              {/* Department Buttons (Clean Minimalist Typography) */}
+              {/* Department Buttons */}
               <div className="space-y-2">
                 <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider text-center">
                   Please select a department
@@ -387,7 +414,7 @@ Would you like to schedule a 1-on-1 session or explore our capabilities?`,
                       <button
                         key={key}
                         onClick={() => handleSelectDepartment(key)}
-                        className="w-full p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-400 dark:hover:border-slate-600 hover:shadow-xs transition-all duration-200 flex items-center justify-between group cursor-pointer text-left"
+                        className="w-full p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-800/80 hover:border-slate-400 dark:hover:border-slate-600 hover:shadow-xs transition-all duration-200 flex items-center justify-between group cursor-pointer text-left"
                       >
                         <div className="space-y-0.5">
                           <span className="font-bold text-xs text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors block">
@@ -411,7 +438,7 @@ Would you like to schedule a 1-on-1 session or explore our capabilities?`,
           {/* VIEW 2: PRE-CHAT CONTACT INFORMATION FORM                 */}
           {/* ========================================================= */}
           {currentStep === 'contact-form' && currentDept && (
-            <div className="flex-1 overflow-y-auto p-5 flex flex-col justify-between bg-white dark:bg-slate-950">
+            <div className="flex-1 overflow-y-auto p-5 flex flex-col justify-between bg-white dark:bg-slate-900">
               <div className="space-y-4">
                 {/* Back Button */}
                 <button
@@ -445,7 +472,7 @@ Would you like to schedule a 1-on-1 session or explore our capabilities?`,
                       placeholder="Enter your name"
                       value={userName}
                       onChange={(e) => setUserName(e.target.value)}
-                      className="w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-slate-900 dark:focus:border-white focus:bg-white transition-all"
+                      className="w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-slate-900 dark:focus:border-rose-500 focus:bg-white dark:focus:bg-slate-800 transition-all"
                     />
                   </div>
 
@@ -459,12 +486,12 @@ Would you like to schedule a 1-on-1 session or explore our capabilities?`,
                       placeholder="Enter email or phone number"
                       value={userContact}
                       onChange={(e) => setUserContact(e.target.value)}
-                      className="w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-slate-900 dark:focus:border-white focus:bg-white transition-all"
+                      className="w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-slate-900 dark:focus:border-rose-500 focus:bg-white dark:focus:bg-slate-800 transition-all"
                     />
                   </div>
 
                   {formError && (
-                    <p className="text-[11px] text-rose-600 font-medium">
+                    <p className="text-[11px] text-rose-600 dark:text-rose-400 font-medium">
                       {formError}
                     </p>
                   )}
@@ -476,7 +503,7 @@ Would you like to schedule a 1-on-1 session or explore our capabilities?`,
                 <button
                   type="submit"
                   form="chat-contact-form"
-                  className="w-full h-11 rounded-xl bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1 cursor-pointer active:scale-98"
+                  className="w-full h-11 rounded-xl bg-slate-950 hover:bg-slate-800 dark:bg-rose-600 dark:hover:bg-rose-500 text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1 cursor-pointer active:scale-98"
                 >
                   <span>Start Chat</span>
                   <ChevronRight className="w-4 h-4" />
@@ -491,7 +518,7 @@ Would you like to schedule a 1-on-1 session or explore our capabilities?`,
           {currentStep === 'chat' && (
             <>
               {/* Message Thread */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-3.5 bg-slate-50/50 dark:bg-slate-950 text-xs">
+              <div className="flex-1 overflow-y-auto p-4 space-y-3.5 bg-slate-50/50 dark:bg-slate-900/60 text-xs">
                 {messages.map((msg) => (
                   <div
                     key={msg.id}
@@ -506,24 +533,22 @@ Would you like to schedule a 1-on-1 session or explore our capabilities?`,
 
                     <div
                       className={cn(
-                        'max-w-[85%] p-3.5 rounded-2xl text-xs leading-relaxed',
+                        'max-w-[88%] p-3.5 rounded-2xl text-xs leading-relaxed',
                         msg.sender === 'user'
-                          ? 'bg-slate-950 text-white dark:bg-white dark:text-slate-950 rounded-br-none shadow-xs'
-                          : 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-800 rounded-bl-none shadow-2xs'
+                          ? 'bg-slate-950 text-white dark:bg-rose-600 dark:text-white rounded-br-none shadow-xs'
+                          : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700/80 rounded-bl-none shadow-2xs'
                       )}
                     >
-                      <div className="whitespace-pre-line space-y-1.5 font-normal">
-                        {msg.text}
-                      </div>
+                      {renderFormattedText(msg.text)}
 
                       {/* Quick Action Chips */}
                       {msg.quickActions && msg.quickActions.length > 0 && (
-                        <div className="mt-3 pt-2 border-t border-slate-100 dark:border-slate-800 flex flex-wrap gap-1.5">
+                        <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-700/70 flex flex-wrap gap-1.5">
                           {msg.quickActions.map((qa, aIdx) => (
                             <button
                               key={aIdx}
                               onClick={qa.action}
-                              className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-colors cursor-pointer"
+                              className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-600 transition-colors cursor-pointer"
                             >
                               {qa.label}
                             </button>
@@ -546,7 +571,7 @@ Would you like to schedule a 1-on-1 session or explore our capabilities?`,
               </div>
 
               {/* Input Bar */}
-              <div className="p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 shrink-0">
+              <div className="p-3 bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 shrink-0">
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
@@ -560,12 +585,12 @@ Would you like to schedule a 1-on-1 session or explore our capabilities?`,
                     placeholder="Type your message..."
                     value={inputMessage}
                     onChange={(e) => setInputMessage(e.target.value)}
-                    className="flex-1 h-9 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-slate-950 dark:focus:border-white focus:bg-white transition-all"
+                    className="flex-1 h-9 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-slate-900 dark:focus:border-rose-500 focus:bg-white dark:focus:bg-slate-800 transition-all"
                   />
                   <button
                     type="submit"
                     disabled={!inputMessage.trim() || isTyping}
-                    className="w-9 h-9 rounded-lg bg-slate-950 hover:bg-slate-800 disabled:opacity-30 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 flex items-center justify-center transition-colors cursor-pointer shadow-xs shrink-0"
+                    className="w-9 h-9 rounded-lg bg-slate-950 hover:bg-slate-800 disabled:opacity-30 dark:bg-rose-600 dark:hover:bg-rose-500 text-white flex items-center justify-center transition-colors cursor-pointer shadow-xs shrink-0"
                     title="Send"
                   >
                     <Send className="w-3.5 h-3.5" />
