@@ -1,0 +1,28 @@
+# Contents LLC
+
+> Marketing consulting and AI engineering that actually moves your numbers.
+> We turn strategic business challenges into production-ready AI systems.
+
+## About Us
+Contents LLC is a team of AI engineers and consultants working alongside enterprise leaders and founder-led brands. We start by understanding the problem, not by picking technology, then design, build, and seamlessly integrate AI into everyday organizational workflows.
+
+## Core Capabilities
+- **AI Strategy & Discovery**: Comprehensive workflow assessment, AI readiness, use case prioritization, and ROI roadmaps.
+- **AI Agents**: Autonomous multi-agent systems and intelligent assistants capable of executing complex business workflows.
+- **RAG & Enterprise Knowledge**: Custom retrieval-augmented generation engines securely connected to private company documents and databases.
+- **AI Workflow Automation**: High-throughput automated pipelines that eliminate operational drag and repetitive manual tasks.
+- **Custom AI Applications**: Bespoke internal tools, dashboards, and client-facing AI platforms.
+- **AI Infrastructure**: Scalable cloud and on-premise deployments with enterprise-grade security and monitoring.
+
+## Consultation & Pricing
+- **Office Hours**: $30 (30-minute 1:1 single-topic deep focus session).
+- **Strategy Intensive**: $500 (2-hour deep dive workshop + 12-page custom strategy document).
+- **Monthly Partner**: $100/mo (Ongoing marketing & AI advisory on-call).
+- **AI Vibe Code Consult**: $1,500 (30-minute codebase & Cursor/LLM optimization review).
+- **AI Solutions Consult**: $15,000 (Full-day 6-hour enterprise architecture & build workshop).
+- **AI & Automation Info-Ops**: $5,000 - $28,000 (Tactical to full-scale automated information operations).
+
+## Contact & Booking
+- Website: https://contents-llc.vercel.app/
+- Book Calendar: https://contents-llc.vercel.app/#schedule
+- Email: hello@contentsllc.com

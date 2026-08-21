@@ -15,21 +15,21 @@ export const APP_CONFIG = {
 
 export const NAV_DROPDOWNS: NavDropdownItem[] = [
   {
-    id: 'products',
-    label: 'Products',
+    id: 'capabilities',
+    label: 'Capabilities',
     children: [
-      { label: 'Enterprise Platform', path: '/#products', description: 'Enterprise management and AI orchestration platform' },
-      { label: 'Analytics & Insights', path: '/#analytics', description: 'Real-time deep insights and visual dashboards' },
-      { label: 'Workflow Automation', path: '/#automation', description: 'Streamline repetitive operations with AI agents' },
+      { label: 'AI Strategy & Discovery', path: '/#capabilities-01', description: 'Readiness assessment, roadmap, and ROI analysis' },
+      { label: 'Autonomous AI Agents', path: '/#capabilities-02', description: 'Intelligent multi-agent systems for business operations' },
+      { label: 'RAG & Enterprise Knowledge', path: '/#capabilities-03', description: 'Connect LLMs securely to your documents and data' },
+      { label: 'AI Workflow Automation', path: '/#capabilities-04', description: 'Automate repetitive pipelines and eliminate drag' },
+      { label: 'Custom AI Applications', path: '/#capabilities-05', description: 'Bespoke internal tools and client-facing platforms' },
+      { label: 'AI Infrastructure', path: '/#capabilities-06', description: 'Deploy, secure, and monitor LLMs on cloud or on-premise' },
     ],
   },
   {
-    id: 'solutions',
-    label: 'Solutions',
-    children: [
-      { label: 'For Large Enterprises', path: '/#enterprise', description: 'Scalable high-throughput architecture' },
-      { label: 'For High-Growth SMEs', path: '/#sme', description: 'Cost-effective and rapid deployment' },
-    ],
+    id: 'how-it-works',
+    label: 'How It Works',
+    path: '/#how-it-works',
   },
   {
     id: 'pricing',
@@ -37,29 +37,22 @@ export const NAV_DROPDOWNS: NavDropdownItem[] = [
     path: '/#pricing',
   },
   {
-    id: 'resources',
-    label: 'Resources',
-    children: [
-      { label: 'Articles & Blog', path: '/#blog' },
-      { label: 'Documentation', path: '/#docs' },
-      { label: 'FAQ', path: '/#faq' },
-    ],
+    id: 'reviews',
+    label: 'Reviews',
+    path: '/#testimonials',
   },
   {
-    id: 'company',
-    label: 'Company',
-    children: [
-      { label: 'About Us', path: '/about' },
-      { label: 'Careers', path: '/#careers' },
-      { label: 'Contact', path: '/#contact' },
-    ],
+    id: 'faq',
+    label: 'FAQ',
+    path: '/#faq',
   },
 ];
 
 export const NAV_ITEMS: NavItem[] = [
   { label: 'Home', path: '/' },
-  { label: 'Products & Solutions', path: '/#products' },
+  { label: 'How It Works', path: '/#how-it-works' },
   { label: 'Pricing', path: '/#pricing' },
-  { label: 'Resources', path: '/#blog' },
-  { label: 'About Us', path: '/about' },
+  { label: 'Schedule', path: '/#schedule' },
+  { label: 'Reviews', path: '/#testimonials' },
+  { label: 'FAQ', path: '/#faq' },
 ];

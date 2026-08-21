@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Container } from '@/components/common/Container';
 import { Button } from '@/components/common/Button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   ArrowRight,
   ArrowLeft,
@@ -25,10 +25,24 @@ import {
   Plus,
   Minus,
   HelpCircle,
+  CreditCard,
+  Lock,
+  QrCode,
+  Building2,
+  Tag,
+  ShieldCheck,
+  Download,
+  ExternalLink,
+  Receipt,
+  Globe,
+  CheckCircle,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import logoImg from '@/assets/logo/LOGO-USA.png';
 
 export const HomePage: React.FC = () => {
+  const navigate = useNavigate();
+
   const philosophyItems = [
     {
       title: 'Think Clearly',
@@ -360,23 +374,56 @@ export const HomePage: React.FC = () => {
   const allAvailablePlans = [...advisoryPlans, ...enterprisePlans];
 
   // =========================================================================
-  // STEP-BY-STEP PROGRESSIVE SCHEDULE WIZARD STATE
+  // STEP-BY-STEP PROGRESSIVE SCHEDULE WIZARD & CHECKOUT STATE
   // =========================================================================
   const [scheduleStep, setScheduleStep] = useState<number>(1);
   const [selectedPlanId, setSelectedPlanId] = useState<string>('strategy-intensive');
   const [selectedDate, setSelectedDate] = useState<number>(27); // 27th Aug
   const [selectedTime, setSelectedTime] = useState<string>('11:00');
   const [bookingFormData, setBookingFormData] = useState({
-    name: '',
-    email: '',
+    name: 'Jed',
+    email: 'jed8@gmail.com',
     phone: '',
     topic: '',
   });
-  const [isBookingSubmitted, setIsBookingSubmitted] = useState<boolean>(false);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+  // Checkout & Payment State
+  const [checkoutCurrency, setCheckoutCurrency] = useState<'THB' | 'USD'>('THB');
+  const [promoCodeInput, setPromoCodeInput] = useState<string>('');
+  const [appliedPromo, setAppliedPromo] = useState<string | null>(null);
+  const [discountPercent, setDiscountPercent] = useState<number>(0);
+  const [promoError, setPromoError] = useState<string>('');
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'applepay' | 'promptpay' | 'bank'>('card');
+  const [cardData, setCardData] = useState({
+    number: '',
+    expiry: '',
+    cvc: '',
+    name: 'Jed',
+    country: 'Thailand',
+  });
+  const [isProcessingPayment, setIsProcessingPayment] = useState<boolean>(false);
+  const [transactionId, setTransactionId] = useState<string>('');
 
   const selectedPlanObj =
     allAvailablePlans.find((p) => p.id === selectedPlanId) || allAvailablePlans[1];
+
+  const USD_EXCHANGE_RATE = 33.96; // 1 USD = 33.96 THB
+
+  const getPlanUsdPrice = (priceStr: string): number => {
+    const clean = priceStr.replace(/[^0-9]/g, '');
+    const val = parseInt(clean, 10);
+    return isNaN(val) ? 500 : val;
+  };
+
+  const baseUsdPrice = getPlanUsdPrice(selectedPlanObj.price);
+  const discountedUsdPrice = Math.max(baseUsdPrice * (1 - discountPercent / 100), 0);
+  const discountedThbPrice = Math.round(discountedUsdPrice * USD_EXCHANGE_RATE);
+
+  const formattedThb = new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB', maximumFractionDigits: 0 }).format(discountedThbPrice);
+  const formattedUsd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(discountedUsdPrice);
+
+  const originalThb = new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB', maximumFractionDigits: 0 }).format(Math.round(baseUsdPrice * USD_EXCHANGE_RATE));
+  const originalUsd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(baseUsdPrice);
 
   const timeSlots = [
     '09:00',
@@ -404,14 +451,53 @@ export const HomePage: React.FC = () => {
     }
   };
 
+  const handleApplyPromo = (e: React.FormEvent) => {
+    e.preventDefault();
+    setPromoError('');
+    const code = promoCodeInput.trim().toUpperCase();
+    if (code === 'VIP10' || code === 'CONTENTS') {
+      setAppliedPromo(code);
+      setDiscountPercent(10);
+      setPromoCodeInput('');
+    } else if (code === 'LAUNCH50') {
+      setAppliedPromo(code);
+      setDiscountPercent(50);
+      setPromoCodeInput('');
+    } else if (code === '') {
+      setPromoError('Please enter a promo code');
+    } else {
+      setPromoError('Invalid promo code');
+    }
+  };
+
+  const handleRemovePromo = () => {
+    setAppliedPromo(null);
+    setDiscountPercent(0);
+    setPromoError('');
+  };
+
   const handleBookingSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    if (!bookingFormData.name || !bookingFormData.email) return;
+    const params = new URLSearchParams({
+      plan: selectedPlanId,
+      date: selectedDate.toString(),
+      time: selectedTime,
+      name: bookingFormData.name,
+      email: bookingFormData.email,
+      phone: bookingFormData.phone || '',
+    });
+    navigate(`/checkout?${params.toString()}`);
+  };
+
+  const handleProcessPayment = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsProcessingPayment(true);
     setTimeout(() => {
-      setIsSubmitting(false);
-      setIsBookingSubmitted(true);
-      setScheduleStep(4);
-    }, 800);
+      setIsProcessingPayment(false);
+      setTransactionId(`TXN-CTN-${Math.floor(100000 + Math.random() * 900000)}`);
+      setScheduleStep(5); // Advance to Step 5: Success & Receipt
+    }, 1200);
   };
 
   // =========================================================================
@@ -510,6 +596,48 @@ export const HomePage: React.FC = () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Handle direct scroll to individual capability cards or sections like #schedule
+  useEffect(() => {
+    const handleHashScroll = () => {
+      const hash = window.location.hash;
+      if (!hash) return;
+
+      if (hash === '#schedule') {
+        const scheduleEl = document.getElementById('schedule');
+        if (scheduleEl) {
+          scheduleEl.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else if (hash === '#pricing' || hash === '#how-it-works' || hash === '#faq' || hash === '#testimonials') {
+        const targetEl = document.querySelector(hash);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else if (hash.startsWith('#capabilities') || hash === '#story-experience') {
+        if (!pinnedTrackRef.current) return;
+        const rect = pinnedTrackRef.current.getBoundingClientRect();
+        const totalScrollable = rect.height - window.innerHeight;
+        let targetProgress = 0.46;
+
+        if (hash === '#capabilities-01') targetProgress = 0.48;
+        else if (hash === '#capabilities-02') targetProgress = 0.55;
+        else if (hash === '#capabilities-03') targetProgress = 0.63;
+        else if (hash === '#capabilities-04') targetProgress = 0.71;
+        else if (hash === '#capabilities-05') targetProgress = 0.79;
+        else if (hash === '#capabilities-06') targetProgress = 0.88;
+
+        const targetY = window.scrollY + rect.top + totalScrollable * targetProgress;
+        window.scrollTo({ top: targetY, behavior: 'smooth' });
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashScroll);
+    if (window.location.hash) {
+      setTimeout(handleHashScroll, 150);
+      setTimeout(handleHashScroll, 400);
+    }
+    return () => window.removeEventListener('hashchange', handleHashScroll);
   }, []);
 
   // =========================================================================
@@ -1896,7 +2024,7 @@ export const HomePage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setScheduleStep(2)}
-                      className="px-4 py-2 rounded-full border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all cursor-pointer flex items-center gap-1.5"
+                      className="px-4 py-2 rounded-none border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all cursor-pointer flex items-center gap-1.5"
                     >
                       <ArrowLeft className="w-3.5 h-3.5" />
                       <span>Back</span>
@@ -1904,56 +2032,466 @@ export const HomePage: React.FC = () => {
 
                     <button
                       type="submit"
-                      disabled={isSubmitting}
-                      className="h-11 px-7 rounded-full bg-slate-950 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-slate-950 text-xs sm:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer shadow-sm active:scale-98 disabled:opacity-50"
+                      className="h-11 px-7 rounded-none bg-slate-950 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-slate-950 text-xs sm:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer shadow-sm active:scale-98"
                     >
-                      <span>{isSubmitting ? 'Booking Session...' : 'Confirm & Reserve Meeting'}</span>
+                      <span>Proceed to Payment</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </form>
               )}
 
-              {/* STEP 4: SUCCESS CONFIRMATION MODAL / SCREEN */}
-              {scheduleStep === 4 && isBookingSubmitted && (
-                <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-6 sm:p-8 rounded-2xl shadow-xl text-center space-y-4 animate-fadeIn max-w-lg mx-auto">
-                  <div className="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto">
-                    <CheckCircle2 className="w-6 h-6" />
+              {/* ========================================================= */}
+              {/* STEP 4: BESPOKE CONTENTS LLC SECURE CHECKOUT SCREEN       */}
+              {/* ========================================================= */}
+              {scheduleStep === 4 && (
+                <div className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-none shadow-2xl p-6 sm:p-8 animate-fadeIn max-h-[82vh] overflow-y-auto">
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    {/* LEFT COLUMN: ORDER SUMMARY & CURRENCY SWITCHER */}
+                    <div className="lg:col-span-5 space-y-6 lg:pr-6 lg:border-r border-slate-200 dark:border-slate-800">
+                      {/* Back & Logo */}
+                      <div className="flex items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setScheduleStep(3)}
+                          className="p-1.5 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+                          title="Back to info"
+                        >
+                          <ArrowLeft className="w-4 h-4" />
+                        </button>
+                        <img
+                          src={logoImg}
+                          alt="Contents LLC"
+                          className="h-8 w-auto object-contain"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                          Payment to
+                        </p>
+                        <h3 className="text-base font-bold text-slate-950 dark:text-white">
+                          Contents Digital Marketing, LLC
+                        </h3>
+                      </div>
+
+                      {/* Currency Selector */}
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                          Select Currency / เลือกสกุลเงิน
+                        </label>
+                        <div className="grid grid-cols-2 gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setCheckoutCurrency('THB')}
+                            className={cn(
+                              'p-2.5 rounded-none border text-xs font-bold transition-all text-left flex items-center justify-between cursor-pointer',
+                              checkoutCurrency === 'THB'
+                                ? 'border-slate-950 dark:border-white bg-slate-50 dark:bg-slate-800 text-slate-950 dark:text-white shadow-xs ring-1 ring-slate-950 dark:ring-white'
+                                : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:border-slate-400'
+                            )}
+                          >
+                            <span className="flex items-center gap-1.5">
+                              <span>🇹🇭</span>
+                              <span>{formattedThb}</span>
+                            </span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => setCheckoutCurrency('USD')}
+                            className={cn(
+                              'p-2.5 rounded-none border text-xs font-bold transition-all text-left flex items-center justify-between cursor-pointer',
+                              checkoutCurrency === 'USD'
+                                ? 'border-slate-950 dark:border-white bg-slate-50 dark:bg-slate-800 text-slate-950 dark:text-white shadow-xs ring-1 ring-slate-950 dark:ring-white'
+                                : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:border-slate-400'
+                            )}
+                          >
+                            <span className="flex items-center gap-1.5">
+                              <span>🇺🇸</span>
+                              <span>{formattedUsd}</span>
+                            </span>
+                          </button>
+                        </div>
+                        <p className="text-[10px] font-mono text-slate-400">
+                          1 USD = {USD_EXCHANGE_RATE.toFixed(4)} THB
+                        </p>
+                      </div>
+
+                      {/* Selected Item Breakdown */}
+                      <div className="p-4 rounded-none bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-3">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="space-y-1">
+                            <h4 className="text-sm font-bold text-slate-900 dark:text-white">
+                              {selectedPlanObj.name}
+                            </h4>
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">
+                              2026-08-{selectedDate} • {selectedTime} EDT — 1:1 Strategic consultation and production blueprint.
+                            </p>
+                          </div>
+                          <span className="text-xs font-bold font-mono text-slate-900 dark:text-white shrink-0">
+                            {checkoutCurrency === 'THB' ? originalThb : originalUsd}
+                          </span>
+                        </div>
+
+                        {appliedPromo && (
+                          <div className="flex items-center justify-between text-xs text-emerald-600 dark:text-emerald-400 font-medium pt-2 border-t border-slate-200 dark:border-slate-700">
+                            <span className="flex items-center gap-1">
+                              <Tag className="w-3.5 h-3.5" />
+                              <span>Promo Code ({appliedPromo} -{discountPercent}%)</span>
+                            </span>
+                            <button
+                              type="button"
+                              onClick={handleRemovePromo}
+                              className="text-[11px] text-rose-500 hover:underline cursor-pointer"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        )}
+
+                        {/* Promo Code Input */}
+                        {!appliedPromo && (
+                          <form onSubmit={handleApplyPromo} className="pt-2 border-t border-slate-200 dark:border-slate-700 flex gap-2">
+                            <input
+                              type="text"
+                              placeholder="Promo code (try VIP10)"
+                              value={promoCodeInput}
+                              onChange={(e) => setPromoCodeInput(e.target.value)}
+                              className="flex-1 h-8 px-2.5 rounded-none border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white uppercase placeholder:normal-case focus:outline-none focus:border-slate-900"
+                            />
+                            <button
+                              type="submit"
+                              className="h-8 px-3 rounded-none bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 text-xs font-bold hover:bg-slate-800 cursor-pointer"
+                            >
+                              Apply
+                            </button>
+                          </form>
+                        )}
+                        {promoError && (
+                          <p className="text-[11px] text-rose-500 font-medium">{promoError}</p>
+                        )}
+
+                        {/* Total Due */}
+                        <div className="pt-3 border-t border-slate-200 dark:border-slate-700 flex items-baseline justify-between">
+                          <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                            Total Due / ยอดรวมที่ต้องชำระ
+                          </span>
+                          <span className="text-lg font-mono font-bold text-slate-950 dark:text-white">
+                            {checkoutCurrency === 'THB' ? formattedThb : formattedUsd}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Carbon Removal & Guarantee */}
+                      <div className="space-y-2 text-[11px] text-slate-500 dark:text-slate-400">
+                        <div className="flex items-start gap-2 p-2.5 rounded-none bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-900/40 text-emerald-800 dark:text-emerald-300">
+                          <span className="text-base shrink-0">🌱</span>
+                          <p className="leading-relaxed">
+                            Contents Digital Marketing, LLC will donate <strong>0.5% of your purchase</strong> to help remove CO₂ from the atmosphere.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* RIGHT COLUMN: PAYMENT METHODS & FORM */}
+                    <div className="lg:col-span-7 space-y-6">
+                      {/* Express 1-Click Checkout */}
+                      <div className="space-y-2">
+                        <div className="grid grid-cols-2 gap-3">
+                          <button
+                            type="button"
+                            onClick={handleProcessPayment}
+                            className="h-11 rounded-none bg-black hover:bg-slate-900 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-98"
+                          >
+                            <span> Pay</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleProcessPayment}
+                            className="h-11 rounded-none bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-98"
+                          >
+                            <span>⚡ link</span>
+                          </button>
+                        </div>
+
+                        <div className="relative flex items-center justify-center py-2">
+                          <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-slate-200 dark:border-slate-800" />
+                          </div>
+                          <span className="relative px-3 bg-white dark:bg-slate-900 text-[10px] font-mono uppercase tracking-wider text-slate-400">
+                            Or pay with card
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Payment Form */}
+                      <form onSubmit={handleProcessPayment} className="space-y-4">
+                        {/* Contact info pre-fill */}
+                        <div className="space-y-1">
+                          <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                            CONTACT EMAIL
+                          </label>
+                          <input
+                            type="email"
+                            required
+                            value={bookingFormData.email}
+                            onChange={(e) => setBookingFormData({ ...bookingFormData, email: e.target.value })}
+                            className="w-full h-10 px-3 rounded-none border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-slate-900"
+                          />
+                        </div>
+
+                        {/* Payment Method Selector Tabs */}
+                        <div className="space-y-2">
+                          <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                            PAYMENT METHOD / วิธีการชำระเงิน
+                          </label>
+
+                          <div className="border border-slate-300 dark:border-slate-700 rounded-none divide-y divide-slate-200 dark:divide-slate-800">
+                            {/* Option 1: Credit Card */}
+                            <div className="p-3.5 space-y-3 bg-white dark:bg-slate-900">
+                              <label className="flex items-center justify-between cursor-pointer">
+                                <div className="flex items-center gap-2">
+                                  <input
+                                    type="radio"
+                                    name="payment_method"
+                                    checked={paymentMethod === 'card'}
+                                    onChange={() => setPaymentMethod('card')}
+                                    className="accent-slate-950"
+                                  />
+                                  <CreditCard className="w-4 h-4 text-slate-700 dark:text-slate-300" />
+                                  <span className="text-xs font-bold text-slate-900 dark:text-white">
+                                    Card (บัตรเครดิต / เดบิต)
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-1 text-[10px] font-mono text-slate-400">
+                                  <span className="px-1 py-0.5 bg-slate-100 dark:bg-slate-800 rounded-none border border-slate-200 dark:border-slate-700">VISA</span>
+                                  <span className="px-1 py-0.5 bg-slate-100 dark:bg-slate-800 rounded-none border border-slate-200 dark:border-slate-700">MC</span>
+                                  <span className="px-1 py-0.5 bg-slate-100 dark:bg-slate-800 rounded-none border border-slate-200 dark:border-slate-700">JCB</span>
+                                </div>
+                              </label>
+
+                              {paymentMethod === 'card' && (
+                                <div className="space-y-3 pt-2">
+                                  <div className="space-y-1">
+                                    <label className="text-[10px] font-bold text-slate-500 uppercase">
+                                      Card Number
+                                    </label>
+                                    <input
+                                      type="text"
+                                      required
+                                      placeholder="4242 •••• •••• 4242"
+                                      value={cardData.number}
+                                      onChange={(e) => setCardData({ ...cardData, number: e.target.value })}
+                                      className="w-full h-9 px-3 rounded-none border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-mono text-slate-900 dark:text-white focus:outline-none focus:border-slate-900"
+                                    />
+                                  </div>
+
+                                  <div className="grid grid-cols-2 gap-3">
+                                    <div className="space-y-1">
+                                      <label className="text-[10px] font-bold text-slate-500 uppercase">
+                                        MM / YY
+                                      </label>
+                                      <input
+                                        type="text"
+                                        required
+                                        placeholder="12 / 28"
+                                        value={cardData.expiry}
+                                        onChange={(e) => setCardData({ ...cardData, expiry: e.target.value })}
+                                        className="w-full h-9 px-3 rounded-none border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-mono text-slate-900 dark:text-white focus:outline-none focus:border-slate-900"
+                                      />
+                                    </div>
+                                    <div className="space-y-1">
+                                      <label className="text-[10px] font-bold text-slate-500 uppercase">
+                                        CVC / CVV
+                                      </label>
+                                      <input
+                                        type="text"
+                                        required
+                                        placeholder="123"
+                                        maxLength={4}
+                                        value={cardData.cvc}
+                                        onChange={(e) => setCardData({ ...cardData, cvc: e.target.value })}
+                                        className="w-full h-9 px-3 rounded-none border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-mono text-slate-900 dark:text-white focus:outline-none focus:border-slate-900"
+                                      />
+                                    </div>
+                                  </div>
+
+                                  <div className="space-y-1">
+                                    <label className="text-[10px] font-bold text-slate-500 uppercase">
+                                      Cardholder Name
+                                    </label>
+                                    <input
+                                      type="text"
+                                      required
+                                      placeholder="Full name on card"
+                                      value={cardData.name}
+                                      onChange={(e) => setCardData({ ...cardData, name: e.target.value })}
+                                      className="w-full h-9 px-3 rounded-none border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-slate-900"
+                                    />
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Option 2: Thai PromptPay QR Code */}
+                            <div className="p-3.5 space-y-2 bg-slate-50/50 dark:bg-slate-800/30">
+                              <label className="flex items-center justify-between cursor-pointer">
+                                <div className="flex items-center gap-2">
+                                  <input
+                                    type="radio"
+                                    name="payment_method"
+                                    checked={paymentMethod === 'promptpay'}
+                                    onChange={() => setPaymentMethod('promptpay')}
+                                    className="accent-slate-950"
+                                  />
+                                  <QrCode className="w-4 h-4 text-emerald-600" />
+                                  <span className="text-xs font-bold text-slate-900 dark:text-white">
+                                    PromptPay / Thai QR (พร้อมเพย์)
+                                  </span>
+                                </div>
+                                <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 border border-emerald-200 dark:border-emerald-800">
+                                  INSTANT
+                                </span>
+                              </label>
+
+                              {paymentMethod === 'promptpay' && (
+                                <div className="pt-2 space-y-2 text-center">
+                                  <div className="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 inline-block mx-auto">
+                                    <QrCode className="w-32 h-32 mx-auto text-slate-900 dark:text-white" />
+                                    <p className="text-[10px] font-mono mt-1 text-slate-500">
+                                      Scan to pay {formattedThb}
+                                    </p>
+                                  </div>
+                                  <p className="text-[11px] text-slate-500">
+                                    Compatible with all Thai banking apps (KBANK, SCB, BBL, KTB, etc.)
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Option 3: Bank Wire Transfer */}
+                            <div className="p-3.5 space-y-2 bg-slate-50/50 dark:bg-slate-800/30">
+                              <label className="flex items-center justify-between cursor-pointer">
+                                <div className="flex items-center gap-2">
+                                  <input
+                                    type="radio"
+                                    name="payment_method"
+                                    checked={paymentMethod === 'bank'}
+                                    onChange={() => setPaymentMethod('bank')}
+                                    className="accent-slate-950"
+                                  />
+                                  <Building2 className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+                                  <span className="text-xs font-bold text-slate-900 dark:text-white">
+                                    US / Global Bank Wire Transfer
+                                  </span>
+                                </div>
+                              </label>
+
+                              {paymentMethod === 'bank' && (
+                                <div className="pt-2 p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-left text-xs font-mono space-y-1 text-slate-600 dark:text-slate-300">
+                                  <p><strong>Bank:</strong> JPMorgan Chase Bank, N.A.</p>
+                                  <p><strong>Account Name:</strong> Contents Digital Marketing, LLC</p>
+                                  <p><strong>Routing (ACH/Wire):</strong> 021000021</p>
+                                  <p><strong>SWIFT/BIC:</strong> CHASUS33XXX</p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Submit Payment Button */}
+                        <button
+                          type="submit"
+                          disabled={isProcessingPayment}
+                          className="w-full h-12 rounded-none bg-slate-950 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-slate-950 text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md active:scale-98 disabled:opacity-50"
+                        >
+                          <Lock className="w-4 h-4" />
+                          <span>
+                            {isProcessingPayment
+                              ? 'Processing Secure Payment...'
+                              : `Pay ${checkoutCurrency === 'THB' ? formattedThb : formattedUsd}`}
+                          </span>
+                        </button>
+
+                        <div className="flex items-center justify-center gap-4 text-[11px] text-slate-400 pt-1">
+                          <span className="flex items-center gap-1">
+                            <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+                            <span>256-Bit SSL Encrypted</span>
+                          </span>
+                          <span>•</span>
+                          <span>Powered by <strong>stripe</strong></span>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ========================================================= */}
+              {/* STEP 5: BOOKING & PAYMENT SUCCESS RECEIPT SCREEN          */}
+              {/* ========================================================= */}
+              {scheduleStep === 5 && (
+                <div className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 p-6 sm:p-8 rounded-none shadow-2xl text-center space-y-5 animate-fadeIn max-w-xl mx-auto">
+                  <div className="w-14 h-14 rounded-full bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto shadow-sm">
+                    <CheckCircle2 className="w-7 h-7" />
                   </div>
 
                   <div className="space-y-1">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-bold">
+                      PAYMENT & RESERVATION CONFIRMED
+                    </span>
                     <h3 className="text-xl sm:text-2xl font-bold text-slate-950 dark:text-white">
-                      You're all scheduled!
+                      You're all confirmed!
                     </h3>
                     <p className="text-xs text-slate-600 dark:text-slate-400 max-w-md mx-auto">
-                      We've sent a calendar invitation and meeting link to <strong className="text-slate-900 dark:text-white">{bookingFormData.email || 'your email'}</strong>.
+                      We've emailed your booking confirmation, official receipt, and Google Meet link to <strong className="text-slate-900 dark:text-white">{bookingFormData.email || 'your email'}</strong>.
                     </p>
                   </div>
 
-                  <div className="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-200/80 dark:border-slate-700 text-left space-y-2 text-xs">
+                  <div className="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-none border border-slate-200 dark:border-slate-700 text-left space-y-2.5 text-xs font-mono">
+                    <div className="flex justify-between border-b border-slate-200 dark:border-slate-700 pb-2">
+                      <span className="text-slate-500">Transaction ID:</span>
+                      <span className="font-bold text-slate-900 dark:text-white">{transactionId || 'TXN-CTN-884192'}</span>
+                    </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-500">Plan:</span>
-                      <span className="font-bold text-slate-900 dark:text-white">{selectedPlanObj.name} ({selectedPlanObj.price})</span>
+                      <span className="text-slate-500">Engagement:</span>
+                      <span className="font-bold text-slate-900 dark:text-white">{selectedPlanObj.name}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Amount Paid:</span>
+                      <span className="font-bold text-emerald-600 dark:text-emerald-400">{checkoutCurrency === 'THB' ? formattedThb : formattedUsd}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-500">Date & Time:</span>
-                      <span className="font-bold text-slate-900 dark:text-white">Thursday, Aug {selectedDate}, 2026 at {selectedTime} (EDT)</span>
+                      <span className="font-bold text-slate-900 dark:text-white">Thursday, Aug {selectedDate}, 2026 at {selectedTime} EDT</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-500">Location:</span>
-                      <span className="font-bold text-slate-900 dark:text-white">Google Meet Video Call</span>
+                      <span className="text-slate-500">Platform:</span>
+                      <span className="font-bold text-slate-900 dark:text-white">Google Meet (1:1 Video Workshop)</span>
                     </div>
                   </div>
 
-                  <div className="pt-2 flex justify-center gap-3">
+                  <div className="pt-2 flex flex-wrap justify-center gap-3">
+                    <a
+                      href="https://calendar.google.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-5 py-2.5 rounded-none bg-slate-950 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-slate-950 text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs"
+                    >
+                      <Calendar className="w-3.5 h-3.5" />
+                      <span>Add to Google Calendar</span>
+                    </a>
+
                     <button
                       onClick={() => {
                         setScheduleStep(1);
-                        setIsBookingSubmitted(false);
+                        setAppliedPromo(null);
+                        setDiscountPercent(0);
                       }}
-                      className="px-5 py-2 rounded-full border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all cursor-pointer"
+                      className="px-5 py-2.5 rounded-none border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all cursor-pointer"
                     >
-                      Schedule Another Time
+                      Schedule Another Session
                     </button>
                   </div>
                 </div>

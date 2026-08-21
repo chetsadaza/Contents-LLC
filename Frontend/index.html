@@ -1,16 +1,213 @@
 <!doctype html>
-<html lang="th">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Enterprise Frontend Application</title>
+
+    <!-- Primary Meta Tags -->
+    <title>Contents LLC — AI Engineering & Growth Marketing Consulting</title>
+    <meta
+      name="title"
+      content="Contents LLC — AI Engineering & Growth Marketing Consulting"
+    />
+    <meta
+      name="description"
+      content="Contents LLC partners with founders and enterprises to engineer custom AI systems, RAG knowledge engines, and automated workflows that drive real business impact."
+    />
+    <meta
+      name="keywords"
+      content="AI engineering, AI consulting, custom AI workflows, RAG enterprise search, AI agents, marketing consulting, growth advisory, multi-agent systems, AI automation"
+    />
+    <meta name="author" content="Contents LLC" />
+    <meta
+      name="robots"
+      content="index, follow, max-snippet:150, max-image-preview:large, max-video-preview:-1"
+    />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://contents-llc.vercel.app/" />
+
+    <!-- Favicons & Icons -->
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://contents-llc.vercel.app/" />
+    <meta
+      property="og:title"
+      content="Contents LLC — AI Engineering & Growth Marketing Consulting"
+    />
+    <meta
+      property="og:description"
+      content="Turn strategic business challenges into production-ready AI systems. Practical AI solutions and marketing advisory that actually moves your numbers."
+    />
+    <meta property="og:image" content="https://contents-llc.vercel.app/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="Contents LLC" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://contents-llc.vercel.app/" />
+    <meta
+      name="twitter:title"
+      content="Contents LLC — AI Engineering & Growth Marketing Consulting"
+    />
+    <meta
+      name="twitter:description"
+      content="Turn strategic business challenges into production-ready AI systems. Practical AI solutions and marketing advisory that actually moves your numbers."
+    />
+    <meta name="twitter:image" content="https://contents-llc.vercel.app/og-image.png" />
+
+    <!-- Google Fonts Preconnect & Stylesheet -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400;1,6..72,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
+
+    <!-- Structured Data (JSON-LD): Organization & Service -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://contents-llc.vercel.app/#organization",
+            "name": "Contents LLC",
+            "url": "https://contents-llc.vercel.app/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://contents-llc.vercel.app/logo.png",
+              "width": 512,
+              "height": 512
+            },
+            "description": "Contents LLC is an AI engineering and growth marketing consulting firm helping founders and enterprise leaders turn strategic business challenges into production-ready AI systems.",
+            "email": "hello@contentsllc.com",
+            "sameAs": []
+          },
+          {
+            "@type": "ProfessionalService",
+            "@id": "https://contents-llc.vercel.app/#service",
+            "name": "Contents LLC AI Engineering & Marketing Consulting",
+            "url": "https://contents-llc.vercel.app/",
+            "priceRange": "$30 - $28,000",
+            "provider": {
+              "@id": "https://contents-llc.vercel.app/#organization"
+            },
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "4.9",
+              "reviewCount": "47",
+              "bestRating": "5",
+              "worstRating": "1"
+            },
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "AI Consulting & Strategy Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Office Hours",
+                    "description": "30 minutes 1:1 focused video call to solve one specific problem with clear next steps."
+                  },
+                  "price": "30",
+                  "priceCurrency": "USD"
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Strategy Intensive",
+                    "description": "2-hour intensive strategy workshop with custom 12-page roadmap and 30-day action plan."
+                  },
+                  "price": "500",
+                  "priceCurrency": "USD"
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "AI Solutions Consult",
+                    "description": "Full day 6-hour intensive enterprise AI architecture, system integration, and scalability audit."
+                  },
+                  "price": "15000",
+                  "priceCurrency": "USD"
+                }
+              ]
+            }
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://contents-llc.vercel.app/#faq",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "How does a consultation or engagement with Contents LLC work?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "We work in three focused phases: Discovery (understanding your workflows and uncovering high-impact AI opportunities without chasing tech hype), Strategy & Design (architecting the technical solution, data pipelines, and execution roadmap), and Build & Deploy (engineering production-ready AI systems integrated directly into your operations)."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Do we need technical expertise or in-house developers to work with you?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Not at all. We handle the full technical buildout, cloud deployment, and system integrations. We also provide complete documentation, recorded video walkthroughs, and hands-on team training so your non-technical team can operate the systems effortlessly."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How does invoicing work? Is upfront payment required?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No upfront payment is required to book a session on our calendar. Invoicing is handled separately after we finalize your scope and confirm your scheduled consultation format."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How long does a typical AI implementation take?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Tactical AI workflows, custom assistants, and internal automations typically launch in 2 to 3 weeks. Comprehensive enterprise architectures, custom RAG knowledge engines, and multi-agent systems generally take 4 to 8 weeks depending on integration complexity."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Is our company data secure when using your AI systems?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Security and data isolation are our highest priorities. Your proprietary business data, customer records, and internal documents are never used to train public foundation models, and all cloud/on-premise deployments adhere strictly to enterprise data privacy standards."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Can I switch or upgrade between Advisory and Enterprise plans?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes, absolutely. Many founders begin with an Office Hours or Strategy Intensive session to validate their requirements, and then roll that investment directly into a larger Enterprise implementation or Info-Ops buildout."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What ongoing support is provided after launch?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Every project includes post-launch monitoring, performance tuning, and team handover. If you require continuous optimization, you can partner with us on a monthly retainer for on-call advisory and feature expansions."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
   </head>
   <body class="bg-slate-50 text-slate-900 antialiased selection:bg-rose-500 selection:text-white min-h-screen">
     <div id="root"></div>
