@@ -2360,25 +2360,12 @@ export const HomePage: React.FC = () => {
       {/* ========================================================= */}
       <section
         id="final-cta"
-        className="relative py-24 lg:py-36 bg-slate-50/70 dark:bg-slate-950/80 border-t border-slate-200/80 dark:border-slate-800 overflow-hidden text-center"
+        className="relative py-24 lg:py-36 bg-white dark:bg-slate-900 overflow-hidden text-center"
       >
-        {/* Subtle Ambient Radial Grid Glow */}
-        <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] dark:bg-[radial-gradient(#334155_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,black_70%,transparent_100%)] opacity-60 dark:opacity-30 -z-10 pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-rose-500/10 dark:bg-rose-950/20 blur-3xl pointer-events-none -z-10" />
-
         <Container>
-          <div className="max-w-3xl mx-auto space-y-8">
-            {/* Sub-tag / Status pill */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 shadow-2xs">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500" />
-              </span>
-              <span>Ready to turn AI into real business impact?</span>
-            </div>
-
+          <div className="max-w-3xl mx-auto space-y-6 sm:space-y-8">
             {/* Main Headline */}
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-950 dark:text-white tracking-tight leading-[1.14]">
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-950 dark:text-white tracking-tight leading-[1.12]">
               Start with the problem.{' '}
               <br className="hidden sm:block" />
               <span className="font-serif italic font-normal text-rose-600 dark:text-rose-500">
@@ -2386,27 +2373,26 @@ export const HomePage: React.FC = () => {
               </span>
             </h2>
 
+            {/* Human Editorial Sub-copy */}
+            <p className="text-sm sm:text-base md:text-lg text-slate-600 dark:text-slate-400 max-w-xl mx-auto font-normal leading-relaxed">
+              Pick a format that fits your stage, book a time directly on our calendar, and let's get straight to work.
+            </p>
+
             {/* CTA Action Buttons */}
             <div className="pt-2 flex flex-wrap items-center justify-center gap-3.5">
               <a href="#schedule">
-                <button className="h-13 px-8 sm:px-9 rounded-full bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 font-bold text-sm sm:text-base shadow-lg shadow-slate-950/15 dark:shadow-none hover:shadow-xl transition-all flex items-center gap-2.5 cursor-pointer active:scale-98">
+                <button className="h-13 px-8 sm:px-9 rounded-full bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 font-bold text-sm sm:text-base shadow-md hover:shadow-lg transition-all flex items-center gap-2.5 cursor-pointer active:scale-98">
                   <span>Book a consultation</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </a>
 
               <a href="mailto:hello@contentsllc.com">
-                <button className="h-13 px-8 sm:px-9 rounded-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-sm sm:text-base shadow-2xs hover:shadow-xs transition-all flex items-center gap-2 cursor-pointer active:scale-98">
+                <button className="h-13 px-8 sm:px-9 rounded-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-semibold text-sm sm:text-base shadow-2xs hover:shadow-xs transition-all flex items-center gap-2 cursor-pointer active:scale-98">
                   <Mail className="w-4 h-4 text-slate-500" />
                   <span>Or send us an email</span>
                 </button>
               </a>
-            </div>
-
-            {/* Reassurance text */}
-            <div className="pt-2 flex items-center justify-center gap-2 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              <span>We'll get back to you shortly.</span>
             </div>
           </div>
         </Container>
