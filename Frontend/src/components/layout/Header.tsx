@@ -13,15 +13,12 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/hooks/useTheme';
-import { useLanguage } from '@/hooks/useLanguage';
 import logoImg from '@/assets/logo/LOGO-USA.png';
 
 export const Header: React.FC = () => {
   const { isDark, toggleTheme } = useTheme();
-  const { currentLang, setLanguage, availableLanguages } = useLanguage();
 
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const [isVisible, setIsVisible] = useState(true);
@@ -52,34 +49,52 @@ export const Header: React.FC = () => {
     }
   };
 
-  // Smart Auto-Hide Scroll Listener
+  // Smart Auto-Hide on Scroll Down & Instant Reveal on Scroll Up (Scroll & Wheel)
   useEffect(() => {
+    let lastScroll = window.scrollY;
+
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+      const currentScroll = window.scrollY;
 
       // Always show at top of page
-      if (currentScrollY <= 10) {
+      if (currentScroll <= 15) {
         setIsVisible(true);
-        lastScrollY.current = currentScrollY;
+        lastScroll = currentScroll;
         return;
       }
 
-      // Scrolling Down -> Hide Navbar
-      if (currentScrollY > lastScrollY.current && currentScrollY > 80) {
+      // Scrolling Down past top -> Hide Navbar
+      if (currentScroll > lastScroll && currentScroll > 60) {
         setIsVisible(false);
         setActiveDropdown(null);
-        setLangDropdownOpen(false);
       }
-      // Scrolling Up -> Show Navbar
-      else if (currentScrollY < lastScrollY.current) {
+      // Scrolling Up -> Instantly Show Navbar
+      else if (currentScroll < lastScroll) {
         setIsVisible(true);
       }
 
-      lastScrollY.current = currentScrollY;
+      lastScroll = currentScroll <= 0 ? 0 : currentScroll;
+    };
+
+    // Instant mouse wheel detection
+    const handleWheel = (e: WheelEvent) => {
+      if (e.deltaY < -2) {
+        // User rolled mouse wheel UP
+        setIsVisible(true);
+      } else if (e.deltaY > 15 && window.scrollY > 80) {
+        // User rolled mouse wheel DOWN
+        setIsVisible(false);
+        setActiveDropdown(null);
+      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('wheel', handleWheel, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('wheel', handleWheel);
+    };
   }, []);
 
   // Close dropdowns on outside click
@@ -87,7 +102,6 @@ export const Header: React.FC = () => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setActiveDropdown(null);
-        setLangDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -100,8 +114,8 @@ export const Header: React.FC = () => {
   return (
     <header
       className={cn(
-        'sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/90 dark:border-slate-800 shadow-2xs transition-all duration-300 ease-in-out',
-        isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'
+        'fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/90 dark:border-slate-800 shadow-md transition-transform duration-300 ease-in-out',
+        isVisible ? 'translate-y-0' : '-translate-y-full pointer-events-none'
       )}
     >
       {/* Top Accent Line Bar */}
@@ -220,7 +234,7 @@ export const Header: React.FC = () => {
           </div>
 
           {/* ========================================================= */}
-          {/* RIGHT GROUP: Theme, Language, CTA                         */}
+          {/* RIGHT GROUP: Theme Toggle & Primary CTA                   */}
           {/* ========================================================= */}
           <div className="hidden md:flex items-center gap-3">
             {/* 1. Theme Toggle */}
@@ -236,42 +250,7 @@ export const Header: React.FC = () => {
               )}
             </button>
 
-            {/* 2. Language Selector */}
-            <div className="relative">
-              <button
-                onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-                className="h-10 px-3.5 rounded-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-medium text-slate-700 dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs"
-              >
-                <span className="text-sm">{currentLang.flag}</span>
-                <span className="font-bold text-slate-800 dark:text-white">{currentLang.code}</span>
-                <ChevronDown className="w-3 h-3 text-slate-400" />
-              </button>
-
-              {langDropdownOpen && (
-                <div className="absolute top-full right-0 mt-2 w-36 bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-200 dark:border-slate-800 py-1.5 z-50 animate-fadeIn">
-                  {availableLanguages.map((lang) => (
-                    <button
-                      key={lang.code}
-                      onClick={() => {
-                        setLanguage(lang.code);
-                        setLangDropdownOpen(false);
-                      }}
-                      className={cn(
-                        'w-full text-left px-3.5 py-2 text-xs transition-colors flex items-center gap-2 font-medium cursor-pointer',
-                        currentLang.code === lang.code
-                          ? 'bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-bold'
-                          : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
-                      )}
-                    >
-                      <span className="text-sm">{lang.flag}</span>
-                      <span>{lang.name}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* 3. Primary CTA Button */}
+            {/* 2. Primary CTA Button */}
             <a href="#schedule">
               <button className="h-10 px-6 rounded-full bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 font-bold text-xs sm:text-sm shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer active:scale-98">
                 <span>Book Consultation</span>

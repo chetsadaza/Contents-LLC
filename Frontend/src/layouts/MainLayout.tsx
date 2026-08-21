@@ -6,9 +6,21 @@ import { CookieBanner } from '@/components/common/CookieBanner';
 
 export const MainLayout: React.FC = () => {
   const location = useLocation();
+  const prevPathRef = React.useRef<string | null>(null);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    // Enable browser automatic scroll restoration on page reload
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'auto';
+    }
+
+    // Only scroll to top when actively navigating to a DIFFERENT route path (e.g., from / to /privacy)
+    // On page reload (when prevPathRef.current is null), preserve the user's current scroll position!
+    if (prevPathRef.current !== null && prevPathRef.current !== location.pathname) {
+      window.scrollTo(0, 0);
+    }
+
+    prevPathRef.current = location.pathname;
   }, [location.pathname]);
 
   return (
@@ -16,8 +28,8 @@ export const MainLayout: React.FC = () => {
       {/* Top Navbar */}
       <Header />
 
-      {/* Main Dynamic Content Area */}
-      <main className="flex-1">
+      {/* Main Dynamic Content Area with top offset for fixed Navbar */}
+      <main className="flex-1 pt-20 sm:pt-22">
         <Outlet />
       </main>
 
