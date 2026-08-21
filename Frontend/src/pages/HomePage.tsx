@@ -381,8 +381,8 @@ export const HomePage: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<number>(27); // 27th Aug
   const [selectedTime, setSelectedTime] = useState<string>('11:00');
   const [bookingFormData, setBookingFormData] = useState({
-    name: 'Jed',
-    email: 'jed8@gmail.com',
+    name: '',
+    email: '',
     phone: '',
     topic: '',
   });
@@ -398,7 +398,7 @@ export const HomePage: React.FC = () => {
     number: '',
     expiry: '',
     cvc: '',
-    name: 'Jed',
+    name: '',
     country: 'Thailand',
   });
   const [isProcessingPayment, setIsProcessingPayment] = useState<boolean>(false);

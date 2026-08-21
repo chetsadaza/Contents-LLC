@@ -121,9 +121,9 @@ export const CheckoutPage: React.FC = () => {
   const planParam = searchParams.get('plan') || 'strategy-intensive';
   const dateParam = parseInt(searchParams.get('date') || '25', 10);
   const timeParam = searchParams.get('time') || '16:00';
-  const nameParam = searchParams.get('name') || 'Jed';
-  const emailParam = searchParams.get('email') || 'jed8@gmail.com';
-  const phoneParam = searchParams.get('phone') || '+66 81 234 5678';
+  const nameParam = searchParams.get('name') || '';
+  const emailParam = searchParams.get('email') || '';
+  const phoneParam = searchParams.get('phone') || '';
 
   const selectedPlan: PlanInfo =
     ALL_PLANS[planParam] || ALL_PLANS['strategy-intensive'];
@@ -490,6 +490,7 @@ export const CheckoutPage: React.FC = () => {
                     <input
                       type="email"
                       required
+                      placeholder="you@company.com"
                       value={contactEmail}
                       onChange={(e) => setContactEmail(e.target.value)}
                       className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-blue-600 focus:bg-white transition-all"
