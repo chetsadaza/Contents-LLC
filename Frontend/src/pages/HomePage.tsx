@@ -1192,11 +1192,113 @@ export const HomePage: React.FC = () => {
       </div>
 
       {/* ========================================================= */}
-      {/* SECTION 5: HOW IT WORKS (Horizontal Sliding Step Experience) */}
+      {/* SECTION: TRUSTED BY BRANDS & METRICS (Social Proof)       */}
+      {/* ========================================================= */}
+      <section
+        id="trusted-by"
+        className="relative pt-20 pb-16 lg:pt-28 lg:pb-20 bg-white dark:bg-slate-900 border-t border-slate-200/80 dark:border-slate-800 overflow-hidden"
+      >
+        <Container>
+          <div className="space-y-10 lg:space-y-12">
+            <div className="text-center space-y-4 max-w-3xl mx-auto">
+              <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs shadow-2xs">
+                <div className="flex text-amber-400">
+                  <Star className="w-3.5 h-3.5 fill-amber-400" />
+                  <Star className="w-3.5 h-3.5 fill-amber-400" />
+                  <Star className="w-3.5 h-3.5 fill-amber-400" />
+                  <Star className="w-3.5 h-3.5 fill-amber-400" />
+                  <Star className="w-3.5 h-3.5 fill-amber-400" />
+                </div>
+                <span className="font-bold text-slate-950 dark:text-white">4.9/5</span>
+                <span className="text-slate-300 dark:text-slate-600">•</span>
+                <span className="text-slate-600 dark:text-slate-300 font-medium">From 47 founder-led brands</span>
+              </div>
+
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-950 dark:text-white tracking-tight leading-[1.18]">
+                Trusted by brands{' '}
+                <span className="font-serif italic font-normal text-rose-600 dark:text-rose-500">
+                  building something real
+                </span>
+              </h2>
+            </div>
+
+            {/* Marquee Brands */}
+            <div className="py-6 border-y border-slate-100 dark:border-slate-800/80 overflow-hidden relative [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+              <div className="animate-marquee gap-12 sm:gap-20 items-center">
+                {[
+                  'Northbound',
+                  'Aster Beauty',
+                  'Brickhouse',
+                  'Paperbird',
+                  'Mellow Foods',
+                  'Hemlock',
+                  'Lumen',
+                  'Prairie',
+                  'Northbound',
+                  'Aster Beauty',
+                  'Brickhouse',
+                  'Paperbird',
+                  'Mellow Foods',
+                  'Hemlock',
+                  'Lumen',
+                  'Prairie',
+                  'Northbound',
+                  'Aster Beauty',
+                  'Brickhouse',
+                  'Paperbird',
+                  'Mellow Foods',
+                  'Hemlock',
+                  'Lumen',
+                  'Prairie',
+                ].map((brand, bIdx) => (
+                  <div
+                    key={bIdx}
+                    className="shrink-0 text-center py-2 px-3 group transition-all cursor-default"
+                  >
+                    <span className="text-lg sm:text-xl font-bold tracking-tight text-slate-400 dark:text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white group-hover:scale-105 inline-block transition-all duration-300 font-sans select-none">
+                      {brand}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Metrics */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+              {[
+                { number: '47', label: 'Brands scaled', desc: 'Accelerated and optimized' },
+                { number: '$14M+', label: 'Ad-spend managed', desc: 'Deployed with high efficiency' },
+                { number: '312%', label: 'Average ROAS uplift', desc: 'Measurable return on growth' },
+                { number: '9 yrs', label: 'Industry experience', desc: 'Tested across diverse markets' },
+              ].map((stat, sIdx) => (
+                <div
+                  key={sIdx}
+                  className="bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-700/60 p-6 sm:p-7 flex flex-col justify-between group hover:border-slate-400 dark:hover:border-slate-600 hover:shadow-md transition-all rounded-none relative"
+                >
+                  <div className="space-y-1">
+                    <div className="text-3xl sm:text-4xl lg:text-5xl font-black font-mono text-slate-950 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">
+                      {stat.number}
+                    </div>
+                    <div className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-200 pt-1">
+                      {stat.label}
+                    </div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400 pt-0.5">
+                      {stat.desc}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* ========================================================= */}
+      {/* SECTION: HOW IT WORKS (Horizontal Sliding Step Experience) */}
       {/* ========================================================= */}
       <section
         id="how-it-works"
-        className="relative pt-20 pb-4 lg:pt-28 lg:pb-6 bg-white dark:bg-slate-900/90 border-t border-slate-200/80 dark:border-slate-800 overflow-hidden"
+        className="relative pt-16 pb-20 lg:pt-20 lg:pb-28 bg-white dark:bg-slate-900/90 border-t border-slate-200/80 dark:border-slate-800 overflow-hidden"
       >
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-gradient-to-br from-slate-500/5 via-transparent to-slate-900/5 dark:from-slate-950/20 dark:to-transparent blur-3xl pointer-events-none -z-10" />
 
@@ -1334,108 +1436,6 @@ export const HomePage: React.FC = () => {
                   </div>
                 ))}
               </div>
-            </div>
-          </div>
-        </Container>
-      </section>
-
-      {/* ========================================================= */}
-      {/* SECTION 6: TRUSTED BY BRANDS & METRICS (Social Proof)     */}
-      {/* ========================================================= */}
-      <section
-        id="trusted-by"
-        className="relative pt-4 pb-6 lg:pt-6 lg:pb-8 bg-white dark:bg-slate-900 overflow-hidden"
-      >
-        <Container>
-          <div className="space-y-10 lg:space-y-12">
-            <div className="text-center space-y-4 max-w-3xl mx-auto">
-              <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs shadow-2xs">
-                <div className="flex text-amber-400">
-                  <Star className="w-3.5 h-3.5 fill-amber-400" />
-                  <Star className="w-3.5 h-3.5 fill-amber-400" />
-                  <Star className="w-3.5 h-3.5 fill-amber-400" />
-                  <Star className="w-3.5 h-3.5 fill-amber-400" />
-                  <Star className="w-3.5 h-3.5 fill-amber-400" />
-                </div>
-                <span className="font-bold text-slate-950 dark:text-white">4.9/5</span>
-                <span className="text-slate-300 dark:text-slate-600">•</span>
-                <span className="text-slate-600 dark:text-slate-300 font-medium">From 47 founder-led brands</span>
-              </div>
-
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-950 dark:text-white tracking-tight leading-[1.18]">
-                Trusted by brands{' '}
-                <span className="font-serif italic font-normal text-rose-600 dark:text-rose-500">
-                  building something real
-                </span>
-              </h2>
-            </div>
-
-            {/* Marquee Brands */}
-            <div className="py-6 border-y border-slate-100 dark:border-slate-800/80 overflow-hidden relative [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
-              <div className="animate-marquee gap-12 sm:gap-20 items-center">
-                {[
-                  'Northbound',
-                  'Aster Beauty',
-                  'Brickhouse',
-                  'Paperbird',
-                  'Mellow Foods',
-                  'Hemlock',
-                  'Lumen',
-                  'Prairie',
-                  'Northbound',
-                  'Aster Beauty',
-                  'Brickhouse',
-                  'Paperbird',
-                  'Mellow Foods',
-                  'Hemlock',
-                  'Lumen',
-                  'Prairie',
-                  'Northbound',
-                  'Aster Beauty',
-                  'Brickhouse',
-                  'Paperbird',
-                  'Mellow Foods',
-                  'Hemlock',
-                  'Lumen',
-                  'Prairie',
-                ].map((brand, bIdx) => (
-                  <div
-                    key={bIdx}
-                    className="shrink-0 text-center py-2 px-3 group transition-all cursor-default"
-                  >
-                    <span className="text-lg sm:text-xl font-bold tracking-tight text-slate-400 dark:text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white group-hover:scale-105 inline-block transition-all duration-300 font-sans select-none">
-                      {brand}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Metrics */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-              {[
-                { number: '47', label: 'Brands scaled', desc: 'Accelerated and optimized' },
-                { number: '$14M+', label: 'Ad-spend managed', desc: 'Deployed with high efficiency' },
-                { number: '312%', label: 'Average ROAS uplift', desc: 'Measurable return on growth' },
-                { number: '9 yrs', label: 'Industry experience', desc: 'Tested across diverse markets' },
-              ].map((stat, sIdx) => (
-                <div
-                  key={sIdx}
-                  className="bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-700/60 p-6 sm:p-7 flex flex-col justify-between group hover:border-slate-400 dark:hover:border-slate-600 hover:shadow-md transition-all rounded-none relative"
-                >
-                  <div className="space-y-1">
-                    <div className="text-3xl sm:text-4xl lg:text-5xl font-black font-mono text-slate-950 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">
-                      {stat.number}
-                    </div>
-                    <div className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-200 pt-1">
-                      {stat.label}
-                    </div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400 pt-0.5">
-                      {stat.desc}
-                    </div>
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         </Container>
